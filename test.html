@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+
+<script>
+
+	let ws = new WebSocket('ws://localhost:8088');
+
+	ws.onopen = () => {
+		console.log('READY => sending ready event');
+		ws.send(JSON.stringify({type:'HANDSHAKE'}));
+	};
+	ws.onmessage = (msg) => {
+		console.log(JSON.parse(msg.data));
+	};
+	ws.onerror = (err) => {
+		console.log(err);
+	};
+	ws.onclose = () => {
+		console.log("connection closed");
+	}
+</script>
+
+</body>
+</html>
