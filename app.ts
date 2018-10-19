@@ -1,9 +1,11 @@
 import { AsteriskAriServer } from './src/asterisk-ari-server';
+import { $log } from 'ts-log-debug';
+import * as dotenv from 'dotenv';
 
 // .env init
-import * as dotenv from 'dotenv';
 dotenv.config();
 
-
 // init Server
-new AsteriskAriServer();
+let server = new AsteriskAriServer();
+$log.debug('Starting up server...');
+server.listen();

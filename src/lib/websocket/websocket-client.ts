@@ -52,7 +52,7 @@ export class WebsocketClient {
 		this.clientSocket.send(JSON.stringify(event));
 	}
 
-
+// todo move functions out of this class!
 	protected checkIfSipOnline() {
 		new RestEndpoints().isSipOnline(308)
 			.then(isOnline => {
