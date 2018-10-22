@@ -17,7 +17,7 @@ export class WebsocketClient {
 		this.serverToClientSocket.on('message', (msg: string) => {
 			let event = new EventModel(msg);
 			if (event.isValid) {
-				this.reactToEvent(event);
+				this.reactToClientEvent(event);
 			} else {
 				this.sendError(event.errorCode);
 			}
@@ -33,7 +33,7 @@ export class WebsocketClient {
 		this.serverToClientSocket.send(JSON.stringify(event));
 	}
 
-	protected reactToEvent(event: EventModel) {
+	protected reactToClientEvent(event: EventModel) {
 		switch (event.name) {
 			case 'HANDSHAKE': {
 				this.checkIfSipOnline(event.getParam('sipNr'));
