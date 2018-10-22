@@ -9,6 +9,8 @@ export class RestEndpoints extends HttpRequest {
 		return new Promise((res, rej) => {
 			this.get(sip).then((r: any) => {
 				return res(r.state === 'online');
+			}).catch(err => {
+				return rej(err);
 			})
 		});
 	}
