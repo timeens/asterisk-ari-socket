@@ -11,12 +11,18 @@
 
 	ws.onopen = () => {
 		output('Client: sending ready event');
-		ws.send(JSON.stringify({type:'HANDSHAKE'}));
+		let action = {
+			name:'HANDSHAKE',
+			params:{
+				sipNr:308
+			}
+		};
+		ws.send(JSON.stringify(action));
 	};
 	ws.onmessage = (msg) => {
-		var data = JSON.parse(msg.data);
-		var error = data.error ? ' => ' + data.error : null;
-		var string = data.type;
+		var event = JSON.parse(msg.data);
+		var error = event.errorCode ? ' => ' + event.errorCode : null;
+		var string = event.name;
 		if(error) string = string + error;
 		output('Server: ' + string);
 	};

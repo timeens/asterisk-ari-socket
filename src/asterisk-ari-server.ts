@@ -1,7 +1,6 @@
 import * as ws from 'ws';
-import { WebsocketClient } from './lib/websocket/websocket-client';
-import { WebsocketServerEventInterface } from './interfaces/websocket-server-event.interface';
 import { $log } from 'ts-log-debug';
+import { WebsocketClient } from './websocket/websocket-client';
 
 export class AsteriskAriServer {
 
@@ -17,18 +16,18 @@ export class AsteriskAriServer {
 	listen() {
 		$log.debug(`Server listening on port ${this.port}`);
 		this.wsServer.on('connection', client => {
-			$log.debug(`Client connected`);
+			$log.debug(`New client connected`);
 			new WebsocketClient(client);
 		});
 	}
 
 
-	protected broadcast(event: WebsocketServerEventInterface) {
-		event.isBroadcast = true;
-		this.wsServer.clients.forEach(client => {
-			client.send(JSON.stringify(event));
-		});
-	}
+	// protected broadcast(event: WebsocketServerEventInterface) {
+	// 	event.isBroadcast = true;
+	// 	this.wsServer.clients.forEach(client => {
+	// 		client.send(JSON.stringify(event));
+	// 	});
+	// }
 
 
 }
