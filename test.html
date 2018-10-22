@@ -7,38 +7,64 @@
 
 <script>
 
-	let ws = new WebSocket('ws://localhost:8088');
+	var ws = null;
 
-	ws.onopen = () => {
-		output('Client: sending ready event');
-		let action = {
-			name:'HANDSHAKE',
-			params:{
-				sipNr:308
+	function init() {
+		var el = document.getElementById('output');
+		el.innerHTML = '';
+		output('Refreshing connection...');
+		var sip = document.getElementById('sip').value;
+
+		ws = new WebSocket('ws://localhost:8088');
+
+		ws.onopen = function () {
+			output('Client: sending ready event');
+			var action = {
+				name: 'HANDSHAKE',
+				params: {
+					sipNr: sip
+				}
+			};
+			ws.send(JSON.stringify(action));
+		};
+		ws.onmessage = function (msg) {
+			var event = JSON.parse(msg.data);
+			var error = event.errorCode ? ' => ' + event.errorCode : null;
+			var string = event.name;
+			if (error) string = string + error;
+			output('Server: ' + string);
+		};
+		ws.onerror = function (err) {
+			output(err);
+		};
+		ws.onclose = function () {
+			output("connection closed");
+		};
+	}
+
+	function call() {
+		var phoneNb = document.getElementById('phone').value;
+		var action = {
+			name: 'OUTBOUND_CALL',
+			params: {
+				phoneNb: phoneNb
 			}
 		};
 		ws.send(JSON.stringify(action));
-	};
-	ws.onmessage = (msg) => {
-		var event = JSON.parse(msg.data);
-		var error = event.errorCode ? ' => ' + event.errorCode : null;
-		var string = event.name;
-		if(error) string = string + error;
-		output('Server: ' + string);
-	};
-	ws.onerror = (err) => {
-		output(err);
-	};
-	ws.onclose = () => {
-		output("connection closed");
-	};
+	}
 
 
-	function output(msg){
+	function output(msg) {
 		var el = document.getElementById('output');
 		el.innerHTML = el.innerHTML + "<br>" + msg;
 	}
 </script>
+
+<input id="sip" placeholder="sip nb" value="308">
+<button onclick="init()">Init</button>
+
+<input id="phone" placeholder="phone nb" value="308">
+<button onclick="call()">Call</button>
 
 <div id="output"></div>
 

@@ -37,9 +37,9 @@ export class EventModel {
 			this.eventConfig.requiredParams.map(required => {
 				if (this.raw.params) {
 					let val = this.raw.params[required.key];
-
-					// todo validateValue
-
+					if (required.validate) {
+						if (!required.validate(val)) this.errorCode = `VALIDATION_ERROR => ${required.key}`;
+					}
 				} else {
 					this.errorCode = `PARAM_MISSING => ${required.key}`
 				}

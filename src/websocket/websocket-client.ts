@@ -37,6 +37,11 @@ export class WebsocketClient {
 		switch (event.name) {
 			case 'HANDSHAKE': {
 				this.checkIfSipOnline(event.getParam('sipNr'));
+				break;
+			}
+			case 'OUTBOUND_CALL': {
+				this.newOutBoundCall();
+				break;
 			}
 		}
 
@@ -55,6 +60,20 @@ export class WebsocketClient {
 			.catch(err => {
 				this.sendError(err.errorCode);
 			});
+	}
+
+	protected newOutBoundCall() {
+		// create stasis
+		// call Client Sip
+		// wait client sip to pick up
+		// call remote endpoint
+		// send ring to client sip
+		// wait for remote to pick up
+		// create bridge
+		// put client and remote channel into bridge
+		// listen to hang ups
+		// destroy channels and bridge
+		// shutdown stasis
 	}
 
 }
