@@ -1,14 +1,18 @@
 import { EventModel } from '../models/event.model';
 import { ServerToClientEventInterface } from '../interfaces/server-to-client-event.interface';
-import { RestEndpointsSip } from '../asterisk-rest/rest-endpoints-sip';
+import { AriRest } from '../asterisk-rest/ari-rest';
 
 
 export class WebsocketClient {
 
 	serverToClientSocket: any;
+	clientIp: String;
+	ariRest: AriRest;
 
 	constructor(socket) {
 		this.serverToClientSocket = socket;
+		this.clientIp = socket._socket.remoteAddress;
+		this.ariRest = new AriRest();
 		this.listen();
 	}
 
@@ -49,7 +53,7 @@ export class WebsocketClient {
 
 
 	protected checkIfSipOnline(sipNb) {
-		new RestEndpointsSip().isSipOnline(sipNb)
+		this.ariRest.restEndpointSip.isSipOnline(sipNb)
 			.then(isOnline => {
 				if (isOnline) {
 					this.sendEvent({name: 'READY'});

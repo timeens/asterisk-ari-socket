@@ -6,7 +6,15 @@ export abstract class HttpRequest {
 
 	public abstract endpoint: string;
 
-	get(uid) {
+	getAll(): Promise<any> {
+		return this.get();
+	}
+
+	getOne(uid): Promise<any> {
+		return this.get(uid);
+	}
+
+	private get(uid?) {
 		return new Promise((res, rej) => {
 			let uri = this.generateUri(uid);
 			$log.debug(`HTTP GET request to ${uri}`);
@@ -26,11 +34,6 @@ export abstract class HttpRequest {
 	}
 
 	delete() {
-
-	}
-
-
-	private parseResponse() {
 
 	}
 
