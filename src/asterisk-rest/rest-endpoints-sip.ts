@@ -1,6 +1,6 @@
 import { HttpRequest } from './http-request';
 
-export class RestEndpoints extends HttpRequest {
+export class RestEndpointsSip extends HttpRequest {
 
 	endpoint = 'endpoints/sip';
 

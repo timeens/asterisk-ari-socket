@@ -1,6 +1,6 @@
 import { EventModel } from '../models/event.model';
 import { ServerToClientEventInterface } from '../interfaces/server-to-client-event.interface';
-import { RestEndpoints } from '../asterisk-rest/rest-endpoints';
+import { RestEndpointsSip } from '../asterisk-rest/rest-endpoints-sip';
 
 
 export class WebsocketClient {
@@ -49,7 +49,7 @@ export class WebsocketClient {
 
 
 	protected checkIfSipOnline(sipNb) {
-		new RestEndpoints().isSipOnline(sipNb)
+		new RestEndpointsSip().isSipOnline(sipNb)
 			.then(isOnline => {
 				if (isOnline) {
 					this.sendEvent({name: 'READY'});
