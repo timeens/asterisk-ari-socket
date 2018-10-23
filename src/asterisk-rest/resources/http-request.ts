@@ -1,4 +1,4 @@
-import { get } from 'request';
+import * as request from 'request';
 import { $log } from "ts-log-debug";
 
 
@@ -18,15 +18,11 @@ export abstract class HttpRequest {
 		return new Promise((res, rej) => {
 			let uri = this.generateUri(uid);
 			$log.debug(`HTTP GET request to ${uri}`);
-			get(uri, (err, data) => {
+			request.get(uri, (err, data) => {
 				if (err) return rej(err);
 				res(this.parse(data.body));
 			})
 		});
-	}
-
-	put() {
-
 	}
 
 	post() {
