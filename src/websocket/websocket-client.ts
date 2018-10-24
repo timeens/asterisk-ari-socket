@@ -1,23 +1,15 @@
+import { WebsocketClientBase } from './websocket-client-base';
 import { EventModel } from '../models/event.model';
-import { ServerToClientEventInterface } from '../interfaces/server-to-client-event.interface';
-import { AriRest } from '../asterisk-rest/ari-rest';
 
 
-export class WebsocketClient {
-
-	serverToClientSocket: any;
-	clientIp: String;
-	ariRest: AriRest;
+export class WebsocketClient extends WebsocketClientBase {
 
 	constructor(socket) {
-		this.serverToClientSocket = socket;
-		this.clientIp = socket._socket.remoteAddress;
-		this.ariRest = new AriRest();
-		this.listen();
+		super(socket);
+		this.listenToClient();
 	}
 
-
-	listen() {
+	listenToClient() {
 		this.serverToClientSocket.on('message', (msg: string) => {
 			let event = new EventModel(msg);
 			if (event.isValid) {
@@ -28,19 +20,11 @@ export class WebsocketClient {
 		});
 	}
 
-	protected sendError(errorCode) {
-		let res = {name: 'ERROR', errorCode: errorCode};
-		this.serverToClientSocket.send(JSON.stringify(res));
-	}
-
-	protected sendEvent(event: ServerToClientEventInterface) {
-		this.serverToClientSocket.send(JSON.stringify(event));
-	}
-
-	protected reactToClientEvent(event: EventModel) {
+	protected async reactToClientEvent(event: EventModel) {
 		switch (event.name) {
 			case 'HANDSHAKE': {
-				this.checkIfSipOnline(event.getParam('sipNr'));
+				await this.checkIfSipOnline(event.getParam('sipNr'));
+				this.sendEvent({name:'wefew'});
 				break;
 			}
 			case 'OUTBOUND_CALL': {
@@ -48,22 +32,6 @@ export class WebsocketClient {
 				break;
 			}
 		}
-
-	}
-
-
-	protected checkIfSipOnline(sipNb) {
-		this.ariRest.restEndpointSip.isSipOnline(sipNb)
-			.then(isOnline => {
-				if (isOnline) {
-					this.sendEvent({name: 'READY'});
-				} else {
-					this.sendError('SIP_UNAVAILABLE');
-				}
-			})
-			.catch(err => {
-				this.sendError(err.errorCode);
-			});
 	}
 
 	protected newOutBoundCall() {
@@ -80,4 +48,8 @@ export class WebsocketClient {
 		// shutdown stasis
 	}
 
+
+	protected async checkIfSipOnline(sipNb) {
+		await this.ariRest.restEndpointSip.isSipOnline(sipNb) ? this.sendEvent({name: 'READY'}) : this.sendError('SIP_UNAVAILABLE');
+	}
 }
