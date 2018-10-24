@@ -39,11 +39,20 @@ export abstract class HttpRequest {
 	}
 
 
-	private generateUri(uid?): string {
-		let uri = `${process.env.ARI_REST_URI}:${process.env.ARI_REST_PORT}/ari/${this.endpoint}`;
+	protected generateUri(uid?): string {
+		let protokoll = process.env.HTTPS ? 'https://' : 'http://';
+		let uri = `${protokoll}${process.env.ARI_REST_IP}:${process.env.ARI_REST_PORT}/ari/${this.endpoint}`;
 		let authPart = `api_key=${process.env.ARI_REST_USERNAME}:${process.env.ARI_REST_PASSWORD}`;
 
 		if (uid) uri = `${uri}/${uid}`;
+
+		return `${uri}?${authPart}`;
+	}
+
+	protected get eventsWebsocketUri(): string {
+		let protokoll = 'ws://';
+		let uri = `${protokoll}${process.env.ARI_REST_IP}:${process.env.ARI_REST_PORT}/ari/${this.endpoint}`;
+		let authPart = `api_key=${process.env.ARI_REST_USERNAME}:${process.env.ARI_REST_PASSWORD}`;
 
 		return `${uri}?${authPart}`;
 	}
