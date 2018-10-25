@@ -1,6 +1,7 @@
 import { ServerToClientEventInterface } from '../interfaces/server-to-client-event.interface';
 import { EventModel } from '../models/event.model';
 import { AriRest } from '../asterisk-rest/ari-rest';
+import { ErrorInterface } from '../interfaces/error.interface';
 
 export abstract class WebsocketClientBase {
 
@@ -14,8 +15,8 @@ export abstract class WebsocketClientBase {
 		this.ariRest = new AriRest();
 	}
 
-	protected sendError(errorCode) {
-		let res = {name: 'ERROR', errorCode: errorCode};
+	protected sendError(errors: Array<ErrorInterface>) {
+		let res = {name: 'ERROR', errors: errors};
 		this.serverToClientSocket.send(JSON.stringify(res));
 	}
 

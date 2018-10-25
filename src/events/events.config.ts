@@ -16,7 +16,7 @@ export const EVENT_CONFIG: Array<EventInterface> = [
 		name: 'OUTBOUND_CALL',
 		requiredParams: [
 			{
-				key: 'phoneNb',
+				key: 'remoteEndpoint',
 				// todo add validation for phone nb's...
 			}
 		]

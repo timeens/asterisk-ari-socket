@@ -1,14 +1,15 @@
 import { EVENT_CONFIG } from '../events/events.config';
 import { ParamInterface } from '../interfaces/Param.interface';
 import { EventInterface } from '../interfaces/event.interface';
+import { ErrorInterface } from '../interfaces/error.interface';
 
 export class EventModel {
 
 	name: string;
+	errors: Array<ErrorInterface> = [];
+
 	protected eventConfig: EventInterface;
 	protected _params: Array<ParamInterface>;
-
-	errorCode: string = null;
 	protected raw: any;
 
 	constructor(jsonString: string) {
@@ -23,29 +24,11 @@ export class EventModel {
 	}
 
 	get isValid() {
-		return !this.errorCode;
+		return this.errors.length === 0;
 	}
 
 	getParam(param: string) {
 		return this._params[param];
-	}
-
-	protected validate() {
-		if (!this.raw.name) this.errorCode = 'MISSING_TYPE';
-		if (!this.eventConfig) this.errorCode = 'EVENT_DOES_NOT_EXIST';
-		if (this.eventConfig && this.eventConfig.requiredParams) {
-			this.eventConfig.requiredParams.map(required => {
-				if (this.raw.params) {
-					let val = this.raw.params[required.key];
-					if (required.validate) {
-						if (!required.validate(val)) this.errorCode = `VALIDATION_ERROR => ${required.key}`;
-					}
-				} else {
-					this.errorCode = `PARAM_MISSING => ${required.key}`
-				}
-
-			});
-		}
 	}
 
 	protected setConfig() {
@@ -53,5 +36,31 @@ export class EventModel {
 			return e.name === this.name;
 		})[0];
 		this._params = this.raw.params;
+	}
+
+	protected validate() {
+		if (!this.raw.name) return this.addError('MISSING_TYPE');
+		if (!this.eventConfig) return this.addError('EVENT_DOES_NOT_EXIST');
+		if (!this.raw.params && this.eventConfig.requiredParams.length !== 0) return this.addError("EVENT_REQUIRES_PARAMETERS");
+		// validate the parameters according to config
+		if (this.eventConfig.requiredParams) {
+			this.eventConfig.requiredParams.map(requiredParam => {
+				let rawParam = this.raw.params[requiredParam.key];
+				if (rawParam) {
+					let val = this.raw.params[requiredParam.key];
+					if (requiredParam.validate) {
+						if (!requiredParam.validate(val)) this.addError(`PARAMETER_VALIDATION_ERROR`, requiredParam.key);
+					}
+				} else {
+					this.addError(`MISSING_PARAMETER`, requiredParam.key);
+				}
+			});
+		}
+	}
+
+	protected addError(code: string, data?: string) {
+		let error: ErrorInterface = {code: code};
+		if (data) error.data = data;
+		this.errors.push(error);
 	}
 }

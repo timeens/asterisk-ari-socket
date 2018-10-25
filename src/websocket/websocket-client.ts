@@ -18,7 +18,7 @@ export class WebsocketClient extends WebsocketClientBase {
 			if (event.isValid) {
 				this.reactToClientEvent(event);
 			} else {
-				this.sendError(event.errorCode);
+				this.sendError(event.errors);
 			}
 		});
 		// todo client close socket event
@@ -28,11 +28,12 @@ export class WebsocketClient extends WebsocketClientBase {
 		switch (event.name) {
 			case 'HANDSHAKE': {
 				this.clientSipId = event.getParam('sipNr');
-				await this.ariRest.restEndpointSip.isSipOnline(this.clientSipId) ? this.sendEvent({name: 'READY'}) : this.sendError('SIP_UNAVAILABLE');
+				await this.ariRest.restEndpointSip.isSipOnline(this.clientSipId) ? this.sendEvent({name: 'READY'}) : this.sendError([{code: 'SIP_UNAVAILABLE'}]);
 				break;
 			}
 			case 'OUTBOUND_CALL': {
-				new OutboundCall(this);
+				let remoteEndpoint = event.getParam('remoteEndpoint');
+				new OutboundCall(this, remoteEndpoint);
 				break;
 			}
 		}

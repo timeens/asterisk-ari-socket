@@ -29,9 +29,15 @@
 		};
 		ws.onmessage = function (msg) {
 			var event = JSON.parse(msg.data);
-			var error = event.errorCode ? ' => ' + event.errorCode : null;
 			var string = event.name;
-			if (error) string = string + error;
+			if (event.name === 'ERROR') {
+				string = 'ERROR: ';
+				event.errors.map(function (e, i) {
+					i++;
+					string = string + i + '. => Code: ' + e.code;
+					if (e.data) string = string + ' (Data: ' + e.data + ')';
+				});
+			}
 			output('Server: ' + string);
 		};
 		ws.onerror = function (err) {
@@ -47,7 +53,7 @@
 		var action = {
 			name: 'OUTBOUND_CALL',
 			params: {
-				phoneNb: phoneNb
+				remoteEndpoint: phoneNb
 			}
 		};
 		ws.send(JSON.stringify(action));
