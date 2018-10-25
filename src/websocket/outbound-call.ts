@@ -23,7 +23,10 @@ export class OutboundCall {
 	listenOnStasis() {
 		this.stasisAppSocket.onopen = () => {
 			this.debugMessage(`Ws Connection to Stasis open`);
-			this.debugMessage(`call to ${this.remote}`);
+			this.clientSocket.ariRest.restChannels.create(this.clientSocket.clientSipId, this.stasisAppName)
+				.then(x => {
+					console.log(x);
+				})
 		};
 		this.stasisAppSocket.onmessage = (msg) => {
 			console.log(msg);

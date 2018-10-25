@@ -25,12 +25,14 @@ export abstract class HttpRequest {
 		});
 	}
 
-	post() {
-
-	}
-
-	delete() {
-
+	post(body) {
+		return new Promise((res, rej) => {
+			$log.debug(`HTTP POST request to ${this.generateUri()}`);
+			request.post(this.generateUri(), {form:body}, (err, data) => {
+				if (err) return rej(err);
+				res(this.parse(data.body));
+			})
+		});
 	}
 
 
