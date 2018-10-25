@@ -6,6 +6,7 @@ import { OutboundCall } from './outbound-call';
 export class WebsocketClient extends WebsocketClientBase {
 
 	clientSipId: number;
+	outboundCall: OutboundCall = null;
 
 	constructor(socket) {
 		super(socket);
@@ -33,8 +34,12 @@ export class WebsocketClient extends WebsocketClientBase {
 			}
 			case 'OUTBOUND_CALL': {
 				let remoteEndpoint = event.getParam('remoteEndpoint');
-				new OutboundCall(this, remoteEndpoint);
+				this.outboundCall = new OutboundCall(this, remoteEndpoint);
 				break;
+			}
+			case 'HANGUP': {
+				if(!this.outboundCall || !this.outboundCall.canHangUp()) return this.sendError([{code:'HANG_UP_NO_ACTIVE_CALL'}]);
+				this.outboundCall.hangUp();
 			}
 		}
 	}

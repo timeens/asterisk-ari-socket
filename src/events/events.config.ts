@@ -20,5 +20,8 @@ export const EVENT_CONFIG: Array<EventInterface> = [
 				// todo add validation for phone nb's...
 			}
 		]
+	},
+	{
+		name: 'HANGUP',
 	}
 ];

@@ -42,7 +42,8 @@ export class OutboundCall {
 	}
 
 	protected eventHandler(event: AriWeboscketEventModel) {
-		if (event.type === 'ChannelDestroyed') return this.destroyCall();
+		if (event.type === 'ChannelDestroyed') return this.hangUp();
+		if(!this.clientChannel) return;
 		switch (event.channel.id) {
 			case this.clientChannel.id:
 				this.clientChannelEventHandler(event);
@@ -61,19 +62,23 @@ export class OutboundCall {
 
 	}
 
-	protected async destroyCall(hangupCause: string = null) {
+	public hangUp(hangupCause: string = null) {
+		let sendHangUpEvent = false;
 		let who = 'client';
 		if (this.clientChannel) {
-			await this.clientSocket.ariRest.restChannels.hangup(this.clientChannel.id);
+			this.clientSocket.ariRest.restChannels.hangup(this.clientChannel.id);
 			this.clientChannel = null;
+			sendHangUpEvent = true;
 		}
 		if (this.remoteChannel) {
 			who = 'remote';
-			await this.clientSocket.ariRest.restChannels.hangup(this.clientChannel.id);
+			this.clientSocket.ariRest.restChannels.hangup(this.clientChannel.id);
 			this.remoteChannel = null;
+			sendHangUpEvent = true;
 		}
 		// todo destroy bridge
-		this.clientSocket.sendEvent({name: 'HANGUP', params: [{key: 'hangupCause', value: hangupCause}, {key: 'who', value: who}]});
+		this.callConnected = false;
+		if(sendHangUpEvent) this.clientSocket.sendEvent({name: 'HANGUP', params: [{key: 'hangupCause', value: hangupCause}, {key: 'who', value: who}]});
 	}
 
 	async setClientSipChannel() {
@@ -82,6 +87,11 @@ export class OutboundCall {
 
 	private debugMessage(msg) {
 		$log.debug(`Stasis App: ${this.stasisAppName} - ${msg}`);
+	}
+
+
+	public canHangUp(){
+		return (this.clientChannel || this.callConnected);
 	}
 
 }

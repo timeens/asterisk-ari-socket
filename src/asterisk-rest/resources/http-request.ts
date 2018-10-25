@@ -48,7 +48,11 @@ export abstract class HttpRequest {
 
 
 	private parse(body) {
-		return JSON.parse(body);
+		try {
+			return JSON.parse(body)
+		} catch (err) {
+			return null;
+		}
 	}
 
 

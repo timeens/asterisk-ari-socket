@@ -60,6 +60,13 @@
 		ws.send(JSON.stringify(action));
 	}
 
+	function hangup(){
+		var action = {
+			name: 'HANGUP'
+		};
+		ws.send(JSON.stringify(action));
+	}
+
 
 	function output(msg) {
 		var el = document.getElementById('output');
@@ -72,6 +79,8 @@
 
 <input id="phone" placeholder="phone nb" value="+41763229207">
 <button onclick="call()">Call</button>
+
+<button onclick="hangup()">Hang Up</button>
 
 <div id="output"></div>
 
