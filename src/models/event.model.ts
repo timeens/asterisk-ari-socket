@@ -39,7 +39,7 @@ export class EventModel {
 	}
 
 	protected validate() {
-		if (!this.raw.name) return this.addError('MISSING_TYPE');
+		if (!this.raw.name) return this.addError('MISSING_EVENT_NAME', 'name:string');
 		if (!this.eventConfig) return this.addError('EVENT_DOES_NOT_EXIST');
 		if (!this.raw.params && this.eventConfig.requiredParams.length !== 0) return this.addError("EVENT_REQUIRES_PARAMETERS");
 		// validate the parameters according to config
