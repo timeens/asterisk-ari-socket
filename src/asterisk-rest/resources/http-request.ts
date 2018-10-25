@@ -25,10 +25,11 @@ export abstract class HttpRequest {
 		});
 	}
 
-	post(body): Promise<any> {
+	post(body, uri = null): Promise<any> {
 		return new Promise((res, rej) => {
-			$log.debug(`HTTP POST request to ${this.generateUri()}`);
-			request.post(this.generateUri(), {form: body}, (err, data) => {
+			let requestUri = this.generateUri(uri);
+			$log.debug(`HTTP POST request to ${requestUri}`);
+			request.post(requestUri, {form: body}, (err, data) => {
 				if (err) return rej(err);
 				res(this.parse(data.body));
 			})
@@ -56,21 +57,29 @@ export abstract class HttpRequest {
 	}
 
 
-	protected generateUri(uid?): string {
-		let protokoll = process.env.HTTPS ? 'https://' : 'http://';
-		let uri = `${protokoll}${process.env.ARI_REST_IP}:${process.env.ARI_REST_PORT}/ari/${this.endpoint}`;
-		let authPart = `api_key=${process.env.ARI_REST_USERNAME}:${process.env.ARI_REST_PASSWORD}`;
+	protected generateUri(between?): string {
+		let uri = this.baseUri;
+		if (between) uri = `${uri}/${between}`;
 
-		if (uid) uri = `${uri}/${uid}`;
-
-		return `${uri}?${authPart}`;
+		return `${uri}?${this.authUrlPart}`;
 	}
 
 	protected get eventsWebsocketUri(): string {
 		let protokoll = 'ws://';
 		let uri = `${protokoll}${process.env.ARI_REST_IP}:${process.env.ARI_REST_PORT}/ari/${this.endpoint}`;
-		let authPart = `api_key=${process.env.ARI_REST_USERNAME}:${process.env.ARI_REST_PASSWORD}`;
 
-		return `${uri}?${authPart}`;
+		return `${uri}?${this.authUrlPart}`;
+	}
+
+	protected get authUrlPart() {
+		return `api_key=${process.env.ARI_REST_USERNAME}:${process.env.ARI_REST_PASSWORD}`;
+	}
+
+	protected get protocol() {
+		return process.env.HTTPS ? 'https://' : 'http://';
+	}
+
+	protected get baseUri() {
+		return `${this.protocol}${process.env.ARI_REST_IP}:${process.env.ARI_REST_PORT}/ari/${this.endpoint}`;
 	}
 }

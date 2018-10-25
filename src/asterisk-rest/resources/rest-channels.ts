@@ -21,4 +21,8 @@ export class RestChannels extends HttpRequest {
 		return this.delete(channelId);
 	}
 
+	async answer(channelId){
+		return this.post(null, `${channelId}/answer`);
+	}
+
 }
