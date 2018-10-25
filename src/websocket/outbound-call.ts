@@ -57,9 +57,8 @@ export class OutboundCall {
 	protected async clientChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
 			// call remote endpoint
-			// remote channel der stasis app hinzufügen
+			// add remote channel to stasis
 			// this.clientSocket.ariRest.restChannels.answer(this.clientChannel.id);
-			console.log(event.type);
 		}
 	}
 
