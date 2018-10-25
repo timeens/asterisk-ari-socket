@@ -56,16 +56,16 @@ export class OutboundCall {
 
 	protected async clientChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
-			// call remote endpoint
-			// add remote channel to stasis
-			// this.clientSocket.ariRest.restChannels.answer(this.clientChannel.id);
+			// todo call remote endpoint
+			// todo add remote channel to stasis
+			// todo this.clientSocket.ariRest.restChannels.answer(this.clientChannel.id);
 		}
 	}
 
 	protected async remoteChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
-			// create bridge
-			// add channels to bridge
+			// todo create bridge
+			// todo add channels to bridge
 		}
 	}
 
