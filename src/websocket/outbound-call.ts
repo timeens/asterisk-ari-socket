@@ -1,5 +1,7 @@
 import { WebsocketClient } from './websocket-client';
 import { $log } from 'ts-log-debug';
+import { AriChannelInterface } from '../interfaces/ari/ari-channel.interface';
+import { AriWeboscketEventModel } from '../models/ari/ari-weboscket-event.model';
 
 export class OutboundCall {
 
@@ -8,35 +10,41 @@ export class OutboundCall {
 	protected stasisAppName: string;
 	protected remote: string;
 	protected bridge: string;
-	protected channelToClient: string;
-	protected channelToRemote: string;
+	protected channelToClient: AriChannelInterface;
+	protected channelToRemote: AriChannelInterface;
 
 	constructor(clientSocket: WebsocketClient, remoteNb: string) {
-		$log.debug(`New outbound call client = ${clientSocket.clientIp}`);
 		this.clientSocket = clientSocket;
-		this.stasisAppName = `${clientSocket.clientSipId}:outbound`;
+		this.stasisAppName = `${clientSocket.clientSipId}_outbound`;
 		this.stasisAppSocket = clientSocket.ariRest.restEvents.stasisAppWebsocket(this.stasisAppName);
 		this.remote = remoteNb;
+		this.debugMessage(`Initialize outbound call`);
 		this.listenOnStasis();
 	}
 
 	listenOnStasis() {
 		this.stasisAppSocket.onopen = () => {
 			this.debugMessage(`Ws Connection to Stasis open`);
-			this.clientSocket.ariRest.restChannels.create(this.clientSocket.clientSipId, this.stasisAppName)
-				.then(x => {
-					console.log(x);
-				})
+			this.setClientSipChannel();
 		};
 		this.stasisAppSocket.onmessage = (msg) => {
-			console.log(msg);
+			this.reactToAsteriskEvent(new AriWeboscketEventModel(msg.data));
 		};
 		this.stasisAppSocket.onerror = (err) => {
-			console.log(err);
+			// console.log(err);
 		};
 		this.stasisAppSocket.onclose = () => {
 			this.debugMessage('Ws connection closed');
 		}
+	}
+
+	protected async reactToAsteriskEvent(event: AriWeboscketEventModel) {
+		console.log(event.data);
+	}
+
+
+	async setClientSipChannel() {
+		this.channelToClient = await this.clientSocket.ariRest.restChannels.create(this.clientSocket.clientSipId, this.stasisAppName);
 	}
 
 	private debugMessage(msg) {
