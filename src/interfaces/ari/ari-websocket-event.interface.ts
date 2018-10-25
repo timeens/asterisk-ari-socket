@@ -1,29 +1,13 @@
+import { AriChannelInterface } from './ari-channel.interface';
+
 export interface AriWebsocketEventInterface {
 	forward: string,
-	type: "Dial",
+	type: 'StasisStart' | 'StasisEnd' | 'Dial' | 'ChannelVarset' | 'ChannelDestroyed',
 	asterisk_id: string,
 	timestamp: string,
-	peer: {
-		id: string,
-		language: string
-		connected: {
-			name: string,
-			number: string
-		},
-		name: string,
-		state: "Down",
-		caller: {
-			name: string,
-			number: string
-		},
-		accountcode: string,
-		dialplan: {
-			context: string,
-			priority: number,
-			exten: string
-		},
-		creationtime: string
-	},
+	peer?: AriChannelInterface,
+	// peer is called channel if the type is ChannelDestroyed, it has the exact same properties
+	channel?: AriChannelInterface,
 	dialstatus: string,
 	dialstring: string,
 	application: string

@@ -16,4 +16,9 @@ export class RestChannels extends HttpRequest {
 		return await this.post(data);
 	}
 
+
+	async hangup(channelId: string) {
+		return this.delete(channelId);
+	}
+
 }

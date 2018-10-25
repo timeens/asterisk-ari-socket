@@ -29,6 +29,7 @@
 		};
 		ws.onmessage = function (msg) {
 			var event = JSON.parse(msg.data);
+			console.log(event);
 			var string = event.name;
 			if (event.name === 'ERROR') {
 				string = 'ERROR: ';

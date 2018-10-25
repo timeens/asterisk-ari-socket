@@ -35,6 +35,17 @@ export abstract class HttpRequest {
 		});
 	}
 
+	delete(uid): Promise<any> {
+		return new Promise((res, rej) => {
+			let uri = this.generateUri(uid);
+			$log.debug(`HTTP DELETE request to ${uri}`);
+			request.delete(uri, (err, data) => {
+				if (err) return rej(err);
+				res(this.parse(data.body));
+			})
+		});
+	}
+
 
 	private parse(body) {
 		return JSON.parse(body);

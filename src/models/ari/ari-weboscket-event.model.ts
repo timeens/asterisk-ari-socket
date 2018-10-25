@@ -2,9 +2,25 @@ import { AriWebsocketEventInterface } from '../../interfaces/ari/ari-websocket-e
 
 export class AriWeboscketEventModel {
 
-	data: AriWebsocketEventInterface;
+	dataInterface: AriWebsocketEventInterface;
+	private relevantEvents = ['StasisStart', 'StasisEnd', 'ChannelDestroyed', 'Dial'];
 
 	constructor(eventString: string) {
-		this.data = JSON.parse(eventString);
+		this.dataInterface = JSON.parse(eventString);
+	}
+
+
+	get channel() {
+		return this.dataInterface.peer || this.dataInterface.channel || null;
+	}
+
+	get type() {
+		return this.dataInterface.type;
+	}
+
+	isRelevant() {
+		return this.relevantEvents.filter((str) => {
+			return str === this.type;
+		}).length === 1;
 	}
 }

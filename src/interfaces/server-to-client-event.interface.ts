@@ -1,7 +1,7 @@
 export interface ServerToClientEventInterface {
-	name: string;
+	name: 'READY' | 'HANGUP' | 'CLIENT_SIP_CALL_REJECTED';
 	params?: Array<{
 		key: string,
-		value: any
+		value: string
 	}>
 }

@@ -15,12 +15,12 @@ export abstract class WebsocketClientBase {
 		this.ariRest = new AriRest();
 	}
 
-	protected sendError(errors: Array<ErrorInterface>) {
+	sendError(errors: Array<ErrorInterface>) {
 		let res = {name: 'ERROR', errors: errors};
 		this.serverToClientSocket.send(JSON.stringify(res));
 	}
 
-	protected sendEvent(event: ServerToClientEventInterface) {
+	sendEvent(event: ServerToClientEventInterface) {
 		this.serverToClientSocket.send(JSON.stringify(event));
 	}
 }

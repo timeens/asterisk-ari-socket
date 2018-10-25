@@ -8,16 +8,17 @@ export class OutboundCall {
 	protected clientSocket: WebsocketClient;
 	protected stasisAppSocket: WebSocket;
 	protected stasisAppName: string;
-	protected remote: string;
+	protected remoteEndpoint: string;
 	protected bridge: string;
-	protected channelToClient: AriChannelInterface;
-	protected channelToRemote: AriChannelInterface;
+	protected clientChannel: AriChannelInterface;
+	protected remoteChannel: AriChannelInterface;
+	protected callConnected: boolean = false;
 
 	constructor(clientSocket: WebsocketClient, remoteNb: string) {
 		this.clientSocket = clientSocket;
 		this.stasisAppName = `${clientSocket.clientSipId}_outbound`;
 		this.stasisAppSocket = clientSocket.ariRest.restEvents.stasisAppWebsocket(this.stasisAppName);
-		this.remote = remoteNb;
+		this.remoteEndpoint = remoteNb;
 		this.debugMessage(`Initialize outbound call`);
 		this.listenOnStasis();
 	}
@@ -28,7 +29,9 @@ export class OutboundCall {
 			this.setClientSipChannel();
 		};
 		this.stasisAppSocket.onmessage = (msg) => {
-			this.reactToAsteriskEvent(new AriWeboscketEventModel(msg.data));
+			let event = new AriWeboscketEventModel(msg.data);
+			if (event.isRelevant()) this.eventHandler(event);
+
 		};
 		this.stasisAppSocket.onerror = (err) => {
 			// console.log(err);
@@ -38,13 +41,43 @@ export class OutboundCall {
 		}
 	}
 
-	protected async reactToAsteriskEvent(event: AriWeboscketEventModel) {
-		console.log(event.data);
+	protected eventHandler(event: AriWeboscketEventModel) {
+		if (event.type === 'ChannelDestroyed') return this.destroyCall();
+		switch (event.channel.id) {
+			case this.clientChannel.id:
+				this.clientChannelEventHandler(event);
+				break;
+			case this.remoteChannel.id:
+				this.remoteChannelEventHandler(event);
+				break;
+		}
 	}
 
+	protected async clientChannelEventHandler(event: AriWeboscketEventModel) {
+
+	}
+
+	protected async remoteChannelEventHandler(event: AriWeboscketEventModel) {
+
+	}
+
+	protected async destroyCall(hangupCause: string = null) {
+		let who = 'client';
+		if (this.clientChannel) {
+			await this.clientSocket.ariRest.restChannels.hangup(this.clientChannel.id);
+			this.clientChannel = null;
+		}
+		if (this.remoteChannel) {
+			who = 'remote';
+			await this.clientSocket.ariRest.restChannels.hangup(this.clientChannel.id);
+			this.remoteChannel = null;
+		}
+		// todo destroy bridge
+		this.clientSocket.sendEvent({name: 'HANGUP', params: [{key: 'hangupCause', value: hangupCause}, {key: 'who', value: who}]});
+	}
 
 	async setClientSipChannel() {
-		this.channelToClient = await this.clientSocket.ariRest.restChannels.create(this.clientSocket.clientSipId, this.stasisAppName);
+		this.clientChannel = await this.clientSocket.ariRest.restChannels.create(this.clientSocket.clientSipId, this.stasisAppName);
 	}
 
 	private debugMessage(msg) {
