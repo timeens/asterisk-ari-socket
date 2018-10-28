@@ -22,6 +22,10 @@ export class WebsocketClient extends WebsocketClientBase {
 				this.sendError(event.errors);
 			}
 		});
+
+		this.serverToClientSocket.on('close', () => {
+			this.outboundCall.hangUp();
+		})
 		// todo client close socket event
 	}
 

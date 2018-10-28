@@ -1,25 +1,12 @@
 import { WebsocketClient } from './websocket-client';
-import { $log } from 'ts-log-debug';
-import { AriChannelInterface } from '../interfaces/ari/ari-channel.interface';
 import { AriWeboscketEventModel } from '../models/ari/ari-weboscket-event.model';
+import { BaseCall } from './base-call';
 
-export class OutboundCall {
 
-	protected clientSocket: WebsocketClient;
-	protected stasisAppSocket: WebSocket;
-	protected stasisAppName: string;
-	protected remoteEndpoint: string;
-	protected bridge: string;
-	protected clientChannel: AriChannelInterface;
-	protected remoteChannel: AriChannelInterface;
-	protected callConnected: boolean = false;
+export class OutboundCall extends BaseCall {
 
 	constructor(clientSocket: WebsocketClient, remoteNb: string) {
-		this.clientSocket = clientSocket;
-		this.stasisAppName = `${clientSocket.clientSipId}_outbound`;
-		this.stasisAppSocket = clientSocket.ariRest.restEvents.stasisAppWebsocket(this.stasisAppName);
-		this.remoteEndpoint = remoteNb;
-		this.debugMessage(`Initialize outbound call`);
+		super(clientSocket, remoteNb);
 		this.listenOnStasis();
 	}
 
@@ -85,20 +72,7 @@ export class OutboundCall {
 		}
 		// todo destroy bridge
 		this.callConnected = false;
+		if (this.stasisAppSocket.OPEN) this.stasisAppSocket.close();
 		if (sendHangUpEvent) this.clientSocket.sendEvent({name: 'HANGUP', params: [{key: 'hangupCause', value: hangupCause}, {key: 'who', value: who}]});
 	}
-
-	async setClientSipChannel() {
-		this.clientChannel = await this.clientSocket.ariRest.restChannels.create(this.clientSocket.clientSipId, this.stasisAppName);
-	}
-
-	private debugMessage(msg) {
-		$log.debug(`Stasis App: ${this.stasisAppName} - ${msg}`);
-	}
-
-
-	public canHangUp() {
-		return (this.clientChannel || this.callConnected);
-	}
-
 }
