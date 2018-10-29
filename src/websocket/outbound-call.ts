@@ -58,8 +58,8 @@ export class OutboundCall extends BaseCall {
 	protected async remoteChannelEventHandler(event: AriWeboscketEventModel) {
 		console.log(event.type);
 		if (event.type === 'StasisStart') {
-			// create bridge
-			// todo add channel to bridge
+			await this.createBridgeAndAddChannels();
+			this.clientSocket.sendEvent({name: 'CALL_CONNECTED'});
 		}
 	}
 

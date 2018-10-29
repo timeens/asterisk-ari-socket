@@ -30,6 +30,10 @@ export abstract class BaseCall {
 		$log.debug(`Stasis App: ${this.stasisAppName} - ${msg}`);
 	}
 
+	protected async createBridgeAndAddChannels(){
+
+	}
+
 
 	public canHangUp() {
 		return (this.clientChannel || this.callConnected);
