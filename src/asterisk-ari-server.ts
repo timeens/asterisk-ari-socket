@@ -11,6 +11,7 @@ export class AsteriskAriServer {
 		let WebSocketServer = ws.Server;
 		this.port = process.env.SERVER_PORT || 3001;
 		this.wsServer = new WebSocketServer({port: this.port});
+		// todo check if asterisk is available otherwise throw error!
 	}
 
 	listen() {

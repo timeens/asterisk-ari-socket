@@ -6,6 +6,10 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 // init Server
-let server = new AsteriskAriServer();
-$log.debug('Starting up server...');
-server.listen();
+try {
+	let server = new AsteriskAriServer();
+	$log.debug('Starting up server...');
+	server.listen();
+} catch (err) {
+	console.log("Error", err);
+}
