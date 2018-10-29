@@ -8,8 +8,8 @@ export abstract class BaseCall {
 	protected stasisAppName: string;
 	protected remoteEndpoint: string;
 	protected bridge: string;
-	protected clientChannel: AriChannelInterface;
-	protected remoteChannel: AriChannelInterface;
+	protected clientChannel: AriChannelInterface = null;
+	protected remoteChannel: AriChannelInterface = null;
 	protected callConnected: boolean = false;
 
 	constructor(clientSocket: WebsocketClient, remoteNb: string) {
@@ -23,6 +23,7 @@ export abstract class BaseCall {
 
 	public async setClientSipChannel() {
 		this.clientChannel = await this.clientSocket.ariRest.restChannels.create(this.clientSocket.clientSipId, this.stasisAppName);
+		this.clientSocket.sendEvent({name:'CLIENT_SIP_RINGING'});
 	}
 
 	protected debugMessage(msg) {

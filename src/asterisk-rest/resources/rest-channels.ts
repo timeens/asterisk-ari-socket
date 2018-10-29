@@ -3,17 +3,18 @@ import { AriChannelInterface } from '../../interfaces/ari/ari-channel.interface'
 
 export class RestChannels extends HttpRequest {
 
-	endpoint = 'channels';
+	protected endpoint = 'channels';
 
 
-	async create(endpoint: string | number, stasisAppName: string): Promise<AriChannelInterface> {
+	async create(endpoint: string | number, stasisAppName: string, useTrunk?: boolean): Promise<AriChannelInterface> {
 		let data = {
-			endpoint: `SIP/${endpoint}`,
+			endpoint: useTrunk ? `SIP/${endpoint}@${process.env.TRUNK_NAME}` : `SIP/${endpoint}`,
 			callerId: process.env.SERVER_DISPLAY_NAME || 'unknown',
-			app: stasisAppName
+			app: stasisAppName,
+			timeout: process.env.CHANNEL_TIMEOUT || 25
 		};
 
-		return await this.post(data);
+		return this.post(data);
 	}
 
 
@@ -21,7 +22,7 @@ export class RestChannels extends HttpRequest {
 		return this.delete(channelId);
 	}
 
-	async answer(channelId){
+	async answer(channelId) {
 		return this.post(null, `${channelId}/answer`);
 	}
 

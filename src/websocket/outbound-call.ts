@@ -43,30 +43,36 @@ export class OutboundCall extends BaseCall {
 
 	protected async clientChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
-			// todo call remote endpoint
-			// todo add remote channel to stasis
+			// todo replace this with the remote number and add the trunk flag
+			let res: any = await this.clientSocket.ariRest.restChannels.create(3001, this.stasisAppName);
+			if (res.error) {
+				this.clientSocket.sendError([{code: 'ENDPOINT_ERROR', data: res.error}]);
+				return this.hangUp();
+			}
+			this.remoteChannel = res;
+			this.clientSocket.sendEvent({name: 'REMOTE_RINGING'});
 			// todo this.clientSocket.ariRest.restChannels.answer(this.clientChannel.id);
+			// todo create bridge
 		}
 	}
 
 	protected async remoteChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
-			// todo create bridge
-			// todo add channels to bridge
+			// todo add channel to bridge
 		}
 	}
 
-	public hangUp(hangupCause: string = null) {
+	public async hangUp(hangupCause: string = null) {
 		let sendHangUpEvent = false;
 		let who = 'client';
 		if (this.clientChannel) {
-			this.clientSocket.ariRest.restChannels.hangup(this.clientChannel.id);
+			await this.clientSocket.ariRest.restChannels.hangup(this.clientChannel.id);
 			this.clientChannel = null;
 			sendHangUpEvent = true;
 		}
 		if (this.remoteChannel) {
 			who = 'remote';
-			this.clientSocket.ariRest.restChannels.hangup(this.clientChannel.id);
+			await this.clientSocket.ariRest.restChannels.hangup(this.remoteChannel.id);
 			this.remoteChannel = null;
 			sendHangUpEvent = true;
 		}

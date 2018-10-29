@@ -4,7 +4,7 @@ import { $log } from "ts-log-debug";
 
 export abstract class HttpRequest {
 
-	public abstract endpoint: string;
+	protected abstract endpoint: string;
 
 	getAll(): Promise<any> {
 		return this.get();
@@ -28,7 +28,7 @@ export abstract class HttpRequest {
 	post(body, uri = null): Promise<any> {
 		return new Promise((res, rej) => {
 			let requestUri = this.generateUri(uri);
-			$log.debug(`HTTP POST request to ${requestUri}`);
+			$log.debug(`HTTP POST request to ${requestUri} - Request Body: ${JSON.stringify(body)}`);
 			request.post(requestUri, {form: body}, (err, data) => {
 				if (err) return rej(err);
 				res(this.parse(data.body));
