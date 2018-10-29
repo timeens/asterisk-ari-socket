@@ -26,4 +26,9 @@ export class RestChannels extends HttpRequest {
 		return this.post(null, `${channelId}/answer`);
 	}
 
+	async sendRing(channelId: string) {
+		let uri = `${channelId}/ring`;
+		return this.post(null, uri);
+	}
+
 }

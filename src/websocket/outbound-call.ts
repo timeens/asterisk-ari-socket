@@ -43,21 +43,22 @@ export class OutboundCall extends BaseCall {
 
 	protected async clientChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
-			// todo replace this with the remote number and add the trunk flag
-			let res: any = await this.clientSocket.ariRest.restChannels.create(3001, this.stasisAppName);
+			// todo modify this to remote endpoint and activate trunk
+			let res: any = await this.clientSocket.ariRest.restChannels.create(3001, this.stasisAppName, false);
 			if (res.error) {
 				this.clientSocket.sendError([{code: 'ENDPOINT_ERROR', data: res.error}]);
 				return this.hangUp();
 			}
 			this.remoteChannel = res;
 			this.clientSocket.sendEvent({name: 'REMOTE_RINGING'});
-			// todo this.clientSocket.ariRest.restChannels.answer(this.clientChannel.id);
-			// todo create bridge
+			this.clientSocket.ariRest.restChannels.sendRing(this.clientChannel.id);
 		}
 	}
 
 	protected async remoteChannelEventHandler(event: AriWeboscketEventModel) {
+		console.log(event.type);
 		if (event.type === 'StasisStart') {
+			// create bridge
 			// todo add channel to bridge
 		}
 	}
