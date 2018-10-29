@@ -10,5 +10,6 @@ export interface AriWebsocketEventInterface {
 	channel?: AriChannelInterface,
 	dialstatus: string,
 	dialstring: string,
-	application: string
+	application: string,
+	cause_txt: string
 }

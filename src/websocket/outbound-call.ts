@@ -29,7 +29,7 @@ export class OutboundCall extends BaseCall {
 	}
 
 	protected eventHandler(event: AriWeboscketEventModel) {
-		if (event.type === 'ChannelDestroyed') return this.hangUp();
+		if (event.type === 'ChannelDestroyed') return this.hangUp(event.hangupCause);
 		if (!this.clientChannel) return;
 		switch (event.channel.id) {
 			case this.clientChannel.id:
@@ -78,7 +78,7 @@ export class OutboundCall extends BaseCall {
 		}
 		this.callConnected = false;
 		if (this.bridge) {
-			this.clientSocket.ariRest.restBridges.shutDown(this.bridge);
+			await this.clientSocket.ariRest.restBridges.shutDown(this.bridge);
 			this.bridge = null;
 		}
 		if (this.stasisAppSocket.OPEN) this.stasisAppSocket.close();

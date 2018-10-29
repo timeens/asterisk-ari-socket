@@ -9,13 +9,16 @@ export class AriWeboscketEventModel {
 		this.dataInterface = JSON.parse(eventString);
 	}
 
-
 	get channel() {
 		return this.dataInterface.peer || this.dataInterface.channel || null;
 	}
 
 	get type() {
 		return this.dataInterface.type;
+	}
+
+	get hangupCause() {
+		return this.dataInterface.cause_txt || null;
 	}
 
 	isRelevant() {
