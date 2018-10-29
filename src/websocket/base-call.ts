@@ -23,15 +23,16 @@ export abstract class BaseCall {
 
 	public async setClientSipChannel() {
 		this.clientChannel = await this.clientSocket.ariRest.restChannels.create(this.clientSocket.clientSipId, this.stasisAppName);
-		this.clientSocket.sendEvent({name:'CLIENT_SIP_RINGING'});
+		this.clientSocket.sendEvent({name: 'CLIENT_SIP_RINGING'});
 	}
 
 	protected debugMessage(msg) {
 		$log.debug(`Stasis App: ${this.stasisAppName} - ${msg}`);
 	}
 
-	protected async createBridgeAndAddChannels(){
-
+	protected async createBridgeAndAddChannels() {
+		this.bridge = await this.clientSocket.ariRest.restBridges.create();
+		return this.clientSocket.ariRest.restBridges.addChannel(this.bridge, [this.clientChannel.id, this.remoteChannel.id]);
 	}
 
 

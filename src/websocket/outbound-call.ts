@@ -56,7 +56,6 @@ export class OutboundCall extends BaseCall {
 	}
 
 	protected async remoteChannelEventHandler(event: AriWeboscketEventModel) {
-		console.log(event.type);
 		if (event.type === 'StasisStart') {
 			await this.createBridgeAndAddChannels();
 			this.clientSocket.sendEvent({name: 'CALL_CONNECTED'});
@@ -77,8 +76,11 @@ export class OutboundCall extends BaseCall {
 			this.remoteChannel = null;
 			sendHangUpEvent = true;
 		}
-		// todo destroy bridge
 		this.callConnected = false;
+		if (this.bridge) {
+			this.clientSocket.ariRest.restBridges.shutDown(this.bridge);
+			this.bridge = null;
+		}
 		if (this.stasisAppSocket.OPEN) this.stasisAppSocket.close();
 		if (sendHangUpEvent) this.clientSocket.sendEvent({name: 'HANGUP', params: [{key: 'hangupCause', value: hangupCause}, {key: 'who', value: who}]});
 	}
