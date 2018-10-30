@@ -1,6 +1,7 @@
 import { WebsocketClientBase } from './websocket-client-base';
 import { EventModel } from '../models/event.model';
 import { OutboundCall } from './outbound-call';
+import { AppLogger } from '../logger/app-logger';
 
 
 export class WebsocketClient extends WebsocketClientBase {
@@ -24,7 +25,8 @@ export class WebsocketClient extends WebsocketClientBase {
 		});
 
 		this.serverToClientSocket.on('close', () => {
-			if(this.outboundCall) this.outboundCall.hangUpClient();
+			if (this.outboundCall) this.outboundCall.hangUpClient();
+			AppLogger.info("Client disconnected");
 		})
 		// todo client close socket event
 	}
@@ -37,14 +39,21 @@ export class WebsocketClient extends WebsocketClientBase {
 				break;
 			}
 			case 'OUTBOUND_CALL': {
+				if (this.callInProgress) return this.sendError([{code: 'CALL_IN_PROGRESS'}]);
 				let remoteEndpoint = event.getParam('remoteEndpoint');
 				this.outboundCall = new OutboundCall(this, remoteEndpoint);
 				break;
 			}
 			case 'HANGUP': {
-				if(!this.outboundCall || !this.outboundCall.canHangUp()) return this.sendError([{code:'HANG_UP_NO_ACTIVE_CALL'}]);
-				this.outboundCall.hangUpClient();
+				if (!this.callInProgress) return this.sendError([{code: 'HANG_UP_NO_ACTIVE_CALL'}]);
+				await this.outboundCall.hangUpClient();
+				this.outboundCall = null;
 			}
 		}
+	}
+
+
+	private get callInProgress(): boolean {
+		return this.outboundCall && this.outboundCall.inProgress;
 	}
 }

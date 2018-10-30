@@ -1,6 +1,6 @@
 import { AriChannelInterface } from '../interfaces/ari/ari-channel.interface';
 import { WebsocketClient } from './websocket-client';
-import { $log } from 'ts-log-debug';
+import { AppLogger } from '../logger/app-logger';
 
 export abstract class BaseCall {
 	protected clientSocket: WebsocketClient;
@@ -11,7 +11,7 @@ export abstract class BaseCall {
 	protected clientChannel: AriChannelInterface = null;
 	protected remoteChannel: AriChannelInterface = null;
 	protected callConnected: boolean = false;
-	protected isDestroying = false;
+	protected callState: 'NEUTRAL' | 'CLIENT_RINGING' | 'REMOTE_RINGING' | 'DESTROYING' | 'CONNECTED' = 'NEUTRAL';
 
 	constructor(clientSocket: WebsocketClient, remoteNb: string) {
 		this.clientSocket = clientSocket;
@@ -21,14 +21,14 @@ export abstract class BaseCall {
 		this.debugMessage(`Initialize outbound call`);
 	}
 
-
 	public async setClientSipChannel() {
 		this.clientChannel = await this.clientSocket.ariRest.restChannels.create(this.clientSocket.clientSipId, this.stasisAppName);
 		this.clientSocket.sendEvent({name: 'CLIENT_SIP_RINGING'});
+		this.callState = 'CLIENT_RINGING';
 	}
 
 	protected debugMessage(msg) {
-		$log.debug(`Stasis App: ${this.stasisAppName} - ${msg}`);
+		AppLogger.info(`Stasis App: ${this.stasisAppName} - ${msg}`);
 	}
 
 	protected async createBridgeAndAddChannels() {
@@ -48,20 +48,20 @@ export abstract class BaseCall {
 		if (this.bridge) return this.clientSocket.ariRest.restBridges.shutDown(this.bridge);
 	}
 
-	public canHangUp() {
-		return (this.clientChannel || this.callConnected);
-	}
-
 	protected async destroy() {
-		if (this.isDestroying) return;
-		this.isDestroying = true;
+		if (this.callState === 'DESTROYING') return;
+		this.callState = 'DESTROYING';
 
 		if (this.clientChannel) await this.hangUpClient();
 		if (this.remoteChannel) await this.hangUpRemote();
 		if (this.bridge) await this.destroyBridge();
-		this.stasisAppSocket.close();
+		if (this.stasisAppSocket.OPEN) this.stasisAppSocket.close();
 		this.clientSocket.sendEvent({name: 'HANGUP'});
-		this.callConnected = false;
-		this.isDestroying = false;
+		this.callState = 'NEUTRAL';
+	}
+
+
+	public get inProgress(): boolean {
+		return (this.callState !== 'NEUTRAL');
 	}
 }

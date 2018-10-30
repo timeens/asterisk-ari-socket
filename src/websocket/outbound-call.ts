@@ -24,21 +24,25 @@ export class OutboundCall extends BaseCall {
 			// console.log(err);
 		};
 		this.stasisAppSocket.onclose = () => {
-			this.debugMessage('Ws connection closed');
+			this.debugMessage('Ws connection closed - Call Ended');
 		}
 	}
 
 	protected eventHandler(event: AriWeboscketEventModel) {
-		if(event.type === 'ChannelDestroyed') return this.destroy();
-		if (this.clientChannel && event.channel.id === this.clientChannel.id) this.clientChannelEventHandler(event);
-		if (this.remoteChannel && event.channel.id === this.remoteChannel.id) this.remoteChannelEventHandler(event);
+		if (event.type === 'ChannelDestroyed' || event.type === 'StasisEnd') return this.destroy();
+		if (this.clientChannel && event.channel.id === this.clientChannel.id) return this.clientChannelEventHandler(event);
+		if (this.remoteChannel && event.channel.id === this.remoteChannel.id) return this.remoteChannelEventHandler(event);
 	}
 
 	protected async clientChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
 			// todo modify this to remote endpoint and activate trunk
 			let res: any = await this.clientSocket.ariRest.restChannels.create(3001, this.stasisAppName, false);
-			if (res.error) return this.clientSocket.sendError([{code: 'ENDPOINT_ERROR', data: res.error}]);
+			if (res.error) {
+				await this.destroy();
+				return this.clientSocket.sendError([{code: 'ENDPOINT_ERROR', data: res.error}]);
+			}
+			this.callState = 'REMOTE_RINGING';
 			this.remoteChannel = res;
 			this.clientSocket.sendEvent({name: 'REMOTE_RINGING'});
 			this.clientSocket.ariRest.restChannels.sendRing(this.clientChannel.id);
@@ -47,7 +51,9 @@ export class OutboundCall extends BaseCall {
 
 	protected async remoteChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
-			this.createBridgeAndAddChannels();
+			await this.createBridgeAndAddChannels();
+			this.debugMessage("Call connected");
+			this.callState = 'CONNECTED';
 			this.clientSocket.sendEvent({name: 'CALL_CONNECTED'});
 		}
 	}
