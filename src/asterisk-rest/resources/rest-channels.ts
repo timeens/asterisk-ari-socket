@@ -1,5 +1,6 @@
 import { HttpRequest } from './http-request';
 import { AriChannelInterface } from '../../interfaces/ari/ari-channel.interface';
+import { AppLogger } from '../../logger/app-logger';
 
 export class RestChannels extends HttpRequest {
 
@@ -13,20 +14,24 @@ export class RestChannels extends HttpRequest {
 			app: stasisAppName,
 			timeout: process.env.CHANNEL_TIMEOUT || 25
 		};
+		AppLogger.debug(`Create Channel`);
 
 		return this.post(data);
 	}
 
 
 	async hangup(channelId: string) {
+		AppLogger.debug(`Hangup Channel ${channelId}`);
 		return this.delete(channelId);
 	}
 
 	async answer(channelId) {
+		AppLogger.debug(`Answer Channel ${channelId}`);
 		return this.post(null, `${channelId}/answer`);
 	}
 
 	async sendRing(channelId: string) {
+		AppLogger.debug(`Indicate ringing to channel ${channelId}`);
 		let uri = `${channelId}/ring`;
 		return this.post(null, uri);
 	}

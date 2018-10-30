@@ -1,5 +1,5 @@
 import * as request from 'request';
-import { $log } from "ts-log-debug";
+import { AppLogger } from '../../logger/app-logger';
 
 
 export abstract class HttpRequest {
@@ -17,7 +17,7 @@ export abstract class HttpRequest {
 	private get(uid?) {
 		return new Promise((res, rej) => {
 			let uri = this.generateUri(uid);
-			$log.debug(`HTTP GET request to ${uri}`);
+			AppLogger.debug(`HTTP GET request to ${uri}`);
 			request.get(uri, (err, data) => {
 				if (err) return rej(err);
 				res(this.parse(data.body));
@@ -28,7 +28,7 @@ export abstract class HttpRequest {
 	post(body, uri = null): Promise<any> {
 		return new Promise((res, rej) => {
 			let requestUri = this.generateUri(uri);
-			$log.debug(`HTTP POST request to ${requestUri} - Request Body: ${JSON.stringify(body)}`);
+			AppLogger.debug(`HTTP POST request to ${requestUri} - Request Body: ${JSON.stringify(body)}`);
 			request.post(requestUri, {form: body}, (err, data) => {
 				if (err) return rej(err);
 				res(this.parse(data.body));
@@ -39,7 +39,7 @@ export abstract class HttpRequest {
 	delete(uid): Promise<any> {
 		return new Promise((res, rej) => {
 			let uri = this.generateUri(uid);
-			$log.debug(`HTTP DELETE request to ${uri}`);
+			AppLogger.debug(`HTTP DELETE request to ${uri}`);
 			request.delete(uri, (err, data) => {
 				if (err) return rej(err);
 				res(this.parse(data.body));

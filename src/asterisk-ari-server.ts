@@ -1,6 +1,6 @@
 import * as ws from 'ws';
-import { $log } from 'ts-log-debug';
 import { WebsocketClient } from './websocket/websocket-client';
+import { AppLogger } from './logger/app-logger';
 
 export class AsteriskAriServer {
 
@@ -8,16 +8,16 @@ export class AsteriskAriServer {
 	protected port: any;
 
 	constructor() {
+		// todo check if asterisk is available otherwise throw error!
 		let WebSocketServer = ws.Server;
 		this.port = process.env.SERVER_PORT || 3001;
 		this.wsServer = new WebSocketServer({port: this.port});
-		// todo check if asterisk is available otherwise throw error!
 	}
 
 	listen() {
-		$log.debug(`Server listening on port ${this.port}`);
+		AppLogger.info(`Server listening on port ${this.port}`);
 		this.wsServer.on('connection', client => {
-			$log.debug(`New client connected`);
+			AppLogger.info(`New client connected`);
 			new WebsocketClient(client);
 		});
 	}

@@ -1,7 +1,7 @@
 import { HttpRequest } from './http-request';
+import { AppLogger } from '../../logger/app-logger';
 
 const ws = require('ws');
-import { $log } from 'ts-log-debug';
 
 export class RestEvents extends HttpRequest {
 
@@ -9,7 +9,7 @@ export class RestEvents extends HttpRequest {
 
 	stasisAppWebsocket(stasisAppName) {
 		let uri = `${this.eventsWebsocketUri}&app=${stasisAppName}`;
-		$log.debug(`Creating Weboscket connection to ${uri}`);
+		AppLogger.debug(`Creating Weboscket connection to ${uri}`);
 
 		return new ws(uri);
 	}
