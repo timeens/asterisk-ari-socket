@@ -35,6 +35,9 @@ export abstract class BaseCall {
 		return this.clientSocket.ariRest.restBridges.addChannel(this.bridge, [this.clientChannel.id, this.remoteChannel.id]);
 	}
 
+	public hangUpClient(){
+		if(this.clientChannel) this.clientSocket.ariRest.restChannels.hangup(this.clientChannel.id);
+	}
 
 	public canHangUp() {
 		return (this.clientChannel || this.callConnected);

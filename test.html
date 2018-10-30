@@ -39,6 +39,7 @@
 					if (e.data) string = string + ' (Data: ' + e.data + ')';
 				});
 			}
+			if(event.params) string = string + ' params => ' + JSON.stringify(event.params);
 			output('Server: ' + string);
 		};
 		ws.onerror = function (err) {

@@ -29,16 +29,10 @@ export class OutboundCall extends BaseCall {
 	}
 
 	protected eventHandler(event: AriWeboscketEventModel) {
-		if (event.type === 'ChannelDestroyed') return this.hangUp(event.hangupCause);
-		if (!this.clientChannel) return;
-		switch (event.channel.id) {
-			case this.clientChannel.id:
-				this.clientChannelEventHandler(event);
-				break;
-			case this.remoteChannel.id:
-				this.remoteChannelEventHandler(event);
-				break;
-		}
+		if (this.callConnected && event.type === 'StasisEnd') return this.hangUp();
+		if (!this.callConnected && event.type === 'ChannelDestroyed') return this.hangUp(event.hangupCause);
+		if (this.clientChannel && event.channel.id === this.clientChannel.id) this.clientChannelEventHandler(event);
+		if (this.remoteChannel && event.channel.id === this.remoteChannel.id) this.remoteChannelEventHandler(event);
 	}
 
 	protected async clientChannelEventHandler(event: AriWeboscketEventModel) {
@@ -47,7 +41,6 @@ export class OutboundCall extends BaseCall {
 			let res: any = await this.clientSocket.ariRest.restChannels.create(3001, this.stasisAppName, false);
 			if (res.error) {
 				this.clientSocket.sendError([{code: 'ENDPOINT_ERROR', data: res.error}]);
-				return this.hangUp();
 			}
 			this.remoteChannel = res;
 			this.clientSocket.sendEvent({name: 'REMOTE_RINGING'});
@@ -62,7 +55,7 @@ export class OutboundCall extends BaseCall {
 		}
 	}
 
-	public async hangUp(hangupCause: string = null) {
+	protected async hangUp(hangupCause: string = null) {
 		let sendHangUpEvent = false;
 		let who = 'client';
 		if (this.clientChannel) {
@@ -72,7 +65,7 @@ export class OutboundCall extends BaseCall {
 		}
 		if (this.remoteChannel) {
 			who = 'remote';
-			await this.clientSocket.ariRest.restChannels.hangup(this.remoteChannel.id);
+			this.clientSocket.ariRest.restChannels.hangup(this.remoteChannel.id);
 			this.remoteChannel = null;
 			sendHangUpEvent = true;
 		}
@@ -81,7 +74,9 @@ export class OutboundCall extends BaseCall {
 			await this.clientSocket.ariRest.restBridges.shutDown(this.bridge);
 			this.bridge = null;
 		}
-		if (this.stasisAppSocket.OPEN) this.stasisAppSocket.close();
-		if (sendHangUpEvent) this.clientSocket.sendEvent({name: 'HANGUP', params: [{key: 'hangupCause', value: hangupCause}, {key: 'who', value: who}]});
+		if (sendHangUpEvent) {
+			if (!this.remoteChannel && !this.clientChannel && this.stasisAppSocket.OPEN) this.stasisAppSocket.close();
+			this.clientSocket.sendEvent({name: 'HANGUP', params: [{key: 'hangupCause', value: hangupCause}, {key: 'who', value: who}]});
+		}
 	}
 }

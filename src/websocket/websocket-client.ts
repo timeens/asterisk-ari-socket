@@ -24,7 +24,7 @@ export class WebsocketClient extends WebsocketClientBase {
 		});
 
 		this.serverToClientSocket.on('close', () => {
-			this.outboundCall.hangUp();
+			this.outboundCall.hangUpClient();
 		})
 		// todo client close socket event
 	}
@@ -43,7 +43,7 @@ export class WebsocketClient extends WebsocketClientBase {
 			}
 			case 'HANGUP': {
 				if(!this.outboundCall || !this.outboundCall.canHangUp()) return this.sendError([{code:'HANG_UP_NO_ACTIVE_CALL'}]);
-				this.outboundCall.hangUp();
+				this.outboundCall.hangUpClient();
 			}
 		}
 	}
