@@ -44,7 +44,7 @@ export class OutboundCall extends BaseCall {
 			this.callState = 'REMOTE_RINGING';
 			this.remoteChannel = res;
 			this.clientSocket.sendEvent({name: 'REMOTE_RINGING'});
-			this.clientSocket.ariRest.restChannels.sendRing(this.clientChannel.id);
+			// this.clientSocket.ariRest.restChannels.sendRing(this.clientChannel.id);
 		}
 	}
 
