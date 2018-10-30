@@ -1,5 +1,4 @@
 import { ServerToClientEventInterface } from '../interfaces/server-to-client-event.interface';
-import { EventModel } from '../models/event.model';
 import { AriRest } from '../asterisk-rest/ari-rest';
 import { ErrorInterface } from '../interfaces/error.interface';
 

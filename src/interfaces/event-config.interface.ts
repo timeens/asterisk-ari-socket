@@ -1,7 +1,6 @@
 import { ParamInterface } from './param.interface';
 
-
-export interface EventInterface {
-	name: string;
+export interface EventConfigInterface {
+	name: 'HANDSHAKE' | 'OUTBOUND_CALL' | 'HANGUP';
 	requiredParams?: Array<ParamInterface>;
 }

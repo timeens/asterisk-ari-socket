@@ -1,6 +1,7 @@
-import { EventInterface } from '../interfaces/event.interface';
+import { EventConfigInterface } from '../interfaces/event-config.interface';
+import { PhoneNumber } from '../models/PhoneNumber';
 
-export const EVENT_CONFIG: Array<EventInterface> = [
+export const EVENT_CONFIG: Array<EventConfigInterface> = [
 	{
 		name: 'HANDSHAKE',
 		requiredParams: [
@@ -17,7 +18,10 @@ export const EVENT_CONFIG: Array<EventInterface> = [
 		requiredParams: [
 			{
 				key: 'remoteEndpoint',
-				// todo add validation for phone nb's...
+				validate: function (val) {
+					let phone = new PhoneNumber(val);
+					return phone.isValid;
+				}
 			}
 		]
 	},

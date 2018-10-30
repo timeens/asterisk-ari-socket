@@ -43,9 +43,7 @@ export class WebsocketClient extends WebsocketClientBase {
 				if (this.callInProgress) return this.sendError([{code: 'CALL_IN_PROGRESS'}]);
 				let remoteEndpoint = event.getParam('remoteEndpoint');
 				let displayName = event.getParam('displayName');
-				let phoneNumber = new PhoneNumber(remoteEndpoint);
-				if (!phoneNumber.isValid) return this.sendError([{code: 'INVALID_REMOTE_NUMBER', data: phoneNumber.rawNumber}]);
-				this.outboundCall = new OutboundCall(this, phoneNumber, displayName);
+				this.outboundCall = new OutboundCall(this, new PhoneNumber(remoteEndpoint), displayName);
 				break;
 			}
 			case 'HANGUP': {

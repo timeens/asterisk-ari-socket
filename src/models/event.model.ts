@@ -1,14 +1,14 @@
 import { EVENT_CONFIG } from '../events/events.config';
 import { ParamInterface } from '../interfaces/Param.interface';
-import { EventInterface } from '../interfaces/event.interface';
 import { ErrorInterface } from '../interfaces/error.interface';
+import { EventConfigInterface } from '../interfaces/event-config.interface';
 
 export class EventModel {
 
 	name: string;
 	errors: Array<ErrorInterface> = [];
 
-	protected eventConfig: EventInterface;
+	protected eventConfig: EventConfigInterface;
 	protected _params: Array<ParamInterface>;
 	protected raw: any;
 
