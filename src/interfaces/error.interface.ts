@@ -1,4 +1,11 @@
 export interface ErrorInterface {
-	code: string;
+	code: 'MISSING_PARAMETER'
+		| 'PARAMETER_VALIDATION_ERROR'
+		| 'EVENT_DOES_NOT_EXIST'
+		| 'MISSING_EVENT_NAME'
+		| 'ENDPOINT_ERROR'
+		| 'CALL_IN_PROGRESS'
+		| 'SIP_UNAVAILABLE'
+		| 'HANG_UP_NO_ACTIVE_CALL';
 	data?: string;
 }

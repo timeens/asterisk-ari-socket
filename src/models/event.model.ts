@@ -58,7 +58,7 @@ export class EventModel {
 		}
 	}
 
-	protected addError(code: string, data?: string) {
+	protected addError(code: any, data?: string) {
 		let error: ErrorInterface = {code: code};
 		if (data) error.data = data;
 		this.errors.push(error);
