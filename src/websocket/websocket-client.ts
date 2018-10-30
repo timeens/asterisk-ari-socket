@@ -2,6 +2,7 @@ import { WebsocketClientBase } from './websocket-client-base';
 import { EventModel } from '../models/event.model';
 import { OutboundCall } from './outbound-call';
 import { AppLogger } from '../logger/app-logger';
+import { PhoneNumber } from '../models/PhoneNumber';
 
 
 export class WebsocketClient extends WebsocketClientBase {
@@ -41,7 +42,9 @@ export class WebsocketClient extends WebsocketClientBase {
 			case 'OUTBOUND_CALL': {
 				if (this.callInProgress) return this.sendError([{code: 'CALL_IN_PROGRESS'}]);
 				let remoteEndpoint = event.getParam('remoteEndpoint');
-				this.outboundCall = new OutboundCall(this, remoteEndpoint);
+				let phoneNumber = new PhoneNumber(remoteEndpoint);
+				if (!phoneNumber.isValid) return this.sendError([{code: 'INVALID_REMOTE_NUMBER', data: phoneNumber.rawNumber}]);
+				this.outboundCall = new OutboundCall(this, phoneNumber.number);
 				break;
 			}
 			case 'HANGUP': {

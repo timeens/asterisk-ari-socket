@@ -7,6 +7,7 @@ export class OutboundCall extends BaseCall {
 
 	constructor(clientSocket: WebsocketClient, remoteNb: string) {
 		super(clientSocket, remoteNb);
+		this.debugMessage(`Remote Nb: ${remoteNb}`);
 		this.listenOnStasis();
 	}
 
@@ -35,8 +36,7 @@ export class OutboundCall extends BaseCall {
 
 	protected async clientChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
-			// todo modify this to remote endpoint and activate trunk
-			let res: any = await this.clientSocket.ariRest.restChannels.create('3001', this.stasisAppName, false);
+			let res: any = await this.clientSocket.ariRest.restChannels.create(this.remoteEndpoint, this.stasisAppName, true);
 			if (res.error) {
 				await this.destroy();
 				return this.clientSocket.sendError([{code: 'ENDPOINT_ERROR', data: res.error}]);

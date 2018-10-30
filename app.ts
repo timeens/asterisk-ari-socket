@@ -2,7 +2,7 @@ import { AsteriskAriServer } from './src/asterisk-ari-server';
 import { AppLogger } from './src/logger/app-logger';
 import * as dotenv from 'dotenv';
 
-// .env init
+//.env init
 dotenv.config();
 
 // init Server

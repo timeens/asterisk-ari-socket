@@ -1,24 +1,25 @@
 {
-  "name": "asterisk-ari-socket",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.ts",
-  "scripts": {
-	"start": "tsc && node dist/app.js",
-	"dev": "nodemon"
-  },
-  "author": "Timothy Bott",
-  "license": "ISC",
-  "devDependencies": {},
-  "dependencies": {
-	"@types/dotenv": "^4.0.3",
-	"@types/request": "^2.47.1",
-	"@types/ws": "^6.0.1",
-	"dotenv": "^6.1.0",
-	"log": "^1.4.0",
-	"request": "^2.88.0",
-	"ts-log-debug": "^4.0.4",
-	"ts-node": "^7.0.1",
-	"ws": "^6.1.0"
-  }
+ "name": "asterisk-ari-socket",
+ "version": "1.0.0",
+ "description": "",
+ "main": "app.ts",
+ "scripts": {
+  "start": "tsc && node dist/app.js",
+  "dev": "nodemon"
+ },
+ "author": "Timothy Bott",
+ "license": "ISC",
+ "devDependencies": {},
+ "dependencies": {
+  "@types/dotenv": "^4.0.3",
+  "@types/request": "^2.47.1",
+  "@types/ws": "^6.0.1",
+  "awesome-phonenumber": "^2.2.6",
+  "dotenv": "^6.1.0",
+  "log": "^1.4.0",
+  "request": "^2.88.0",
+  "ts-log-debug": "^4.0.4",
+  "ts-node": "^7.0.1",
+  "ws": "^6.1.0"
+ }
 }
