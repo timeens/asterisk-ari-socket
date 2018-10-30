@@ -1,16 +1,17 @@
 import { WebsocketClient } from './websocket-client';
 import { AriWeboscketEventModel } from '../models/ari/ari-weboscket-event.model';
 import { BaseCall } from './base-call';
+import { PhoneNumber } from '../models/PhoneNumber';
 
 
 export class OutboundCall extends BaseCall {
 
 	displayName: string = null;
 
-	constructor(clientSocket: WebsocketClient, remoteNb: string, displayName?: string) {
+	constructor(clientSocket: WebsocketClient, remoteNb: PhoneNumber, displayName?: string) {
 		super(clientSocket, remoteNb);
 		this.displayName = displayName;
-		this.debugMessage(`Remote Nb: ${remoteNb}`);
+		this.debugMessage(`Remote Nb${remoteNb.internal ? '(internal)' : ''}: ${remoteNb.number}`);
 		this.listenOnStasis();
 	}
 
@@ -39,7 +40,7 @@ export class OutboundCall extends BaseCall {
 
 	protected async clientChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
-			let res: any = await this.clientSocket.ariRest.restChannels.create(this.remoteEndpoint, this.stasisAppName, this.displayName, true);
+			let res: any = await this.clientSocket.ariRest.restChannels.create(this.remoteEndpoint.number, this.stasisAppName, this.displayName, !this.remoteEndpoint.internal);
 			if (res.error) {
 				await this.destroy();
 				return this.clientSocket.sendError([{code: 'ENDPOINT_ERROR', data: res.error}]);

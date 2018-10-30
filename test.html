@@ -12,7 +12,7 @@
 	var ws = null;
 
 	function init() {
-		if(ws && ws.OPEN) ws.close();
+		if (ws && ws.OPEN) ws.close();
 		var el = document.getElementById('output');
 		el.innerHTML = '';
 		output('Refreshing connection...');
@@ -42,7 +42,7 @@
 					if (e.data) string = string + ' (Data: ' + e.data + ')';
 				});
 			}
-			if(event.params) string = string + ' params => ' + JSON.stringify(event.params);
+			if (event.params) string = string + ' params => ' + JSON.stringify(event.params);
 			output('Server: ' + string);
 		};
 		ws.onerror = function (err) {
@@ -55,16 +55,18 @@
 
 	function call() {
 		var phoneNb = document.getElementById('phone').value;
+		var displayName = document.getElementById('displayName').value;
 		var action = {
 			name: 'OUTBOUND_CALL',
 			params: {
-				remoteEndpoint: phoneNb
+				remoteEndpoint: phoneNb,
+				displayName: displayName
 			}
 		};
 		ws.send(JSON.stringify(action));
 	}
 
-	function hangup(){
+	function hangup() {
 		var action = {
 			name: 'HANGUP'
 		};
@@ -78,15 +80,26 @@
 	}
 </script>
 <div class="well">
-<input id="sip" placeholder="sip nb" value="308">
-<button onclick="init()">Init</button>
+	<div class="form-group">
+		<label>client Sip nb</label>
+		<input class="form-control" id="sip" placeholder="sip nb" value="308">
+	</div>
 
-<input id="phone" placeholder="phone nb" value="+41763229207">
-<button onclick="call()">Call</button>
-
-<button onclick="hangup()">Hang Up</button>
-
-<div id="output"></div>
+	<div class="form-group">
+		<label>Phone number</label>
+		<input class="form-control" id="phone" placeholder="phone nb" value="3001">
+	</div>
+	<div class="form-group">
+		<label>Display Name</label>
+		<input class="form-control" id="displayName" placeholder="displayName" value="tim">
+	</div>
+	<div class="form-group">
+		<button class="btn" onclick="init()">Init</button>
+		<button class="btn" onclick="call()">Call Remote</button>
+		<button class="btn" onclick="call()">Call Intern</button>
+		<button class="btn" onclick="hangup()">Hang Up</button>
+	</div>
 </div>
+<div class="well" id="output"></div>
 </body>
 </html>

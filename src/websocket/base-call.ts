@@ -1,12 +1,13 @@
 import { AriChannelInterface } from '../interfaces/ari/ari-channel.interface';
 import { WebsocketClient } from './websocket-client';
 import { AppLogger } from '../logger/app-logger';
+import { PhoneNumber } from '../models/PhoneNumber';
 
 export abstract class BaseCall {
 	protected clientSocket: WebsocketClient;
 	protected stasisAppSocket: WebSocket;
 	protected stasisAppName: string;
-	protected remoteEndpoint: string;
+	protected remoteEndpoint: PhoneNumber;
 	protected bridge: string;
 	protected clientChannel: AriChannelInterface = null;
 	protected remoteChannel: AriChannelInterface = null;
@@ -23,7 +24,7 @@ export abstract class BaseCall {
 		this._callState = state;
 	}
 
-	constructor(clientSocket: WebsocketClient, remoteNb: string) {
+	constructor(clientSocket: WebsocketClient, remoteNb: PhoneNumber) {
 		this.clientSocket = clientSocket;
 		this.stasisAppName = `${clientSocket.clientSipId}_outbound`;
 		this.stasisAppSocket = clientSocket.ariRest.restEvents.stasisAppWebsocket(this.stasisAppName);
