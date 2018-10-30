@@ -36,4 +36,10 @@ export class RestChannels extends HttpRequest {
 		return this.post(null, uri);
 	}
 
+	async removeRing(channelId: string) {
+		AppLogger.debug(`Remove ring signal from channel ${channelId}`);
+		let uri = `${channelId}/ring`;
+		return this.delete(uri);
+	}
+
 }

@@ -51,6 +51,7 @@ export class OutboundCall extends BaseCall {
 
 	protected async remoteChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
+			this.clientSocket.ariRest.restChannels.removeRing(this.clientChannel.id);
 			await this.addChannelToExistingBridge([this.remoteChannel.id]);
 			this.callState = 'CONNECTED';
 			this.clientSocket.sendEvent({name: 'CALL_CONNECTED'});
