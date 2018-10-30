@@ -39,7 +39,7 @@ export class PhoneNumber {
 	}
 
 	set internal(phoneNumber: any) {
-		this._isInternal = (phoneNumber.length >= 4 && Number.isInteger(Number.parseInt(phoneNumber)));
+		this._isInternal = (phoneNumber.length <= 4 && Number.isInteger(Number.parseInt(phoneNumber)));
 	}
 
 	get internal() {
