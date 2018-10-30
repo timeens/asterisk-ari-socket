@@ -10,6 +10,7 @@
 	var ws = null;
 
 	function init() {
+		if(ws && ws.OPEN) ws.close();
 		var el = document.getElementById('output');
 		el.innerHTML = '';
 		output('Refreshing connection...');
