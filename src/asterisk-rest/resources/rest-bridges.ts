@@ -23,7 +23,10 @@ export class RestBridges extends HttpRequest {
 		let body = {
 			channel: channelIds.join(',')
 		};
-		return this.post(body, uri);
+
+		let res = await this.post(body, uri);
+		console.log(`response:`, res);
+		return res;
 	}
 
 }

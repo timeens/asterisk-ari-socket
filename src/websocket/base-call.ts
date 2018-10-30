@@ -41,9 +41,16 @@ export abstract class BaseCall {
 		AppLogger.info(`Stasis App: ${this.stasisAppName} - ${msg}`);
 	}
 
-	protected async createBridgeAndAddChannels() {
-		this.bridge = await this.clientSocket.ariRest.restBridges.create();
-		return this.clientSocket.ariRest.restBridges.addChannel(this.bridge, [this.clientChannel.id, this.remoteChannel.id]);
+	protected async createBridge(channelIds: Array<string> = []) {
+		if (channelIds.length > 0) {
+			this.bridge = await this.clientSocket.ariRest.restBridges.create();
+			return this.clientSocket.ariRest.restBridges.addChannel(this.bridge, channelIds);
+		}
+		return this.clientSocket.ariRest.restBridges.create();
+	}
+
+	protected async addChannelToExistingBridge(channelIds: Array<string>) {
+		if (this.bridge) return this.clientSocket.ariRest.restBridges.addChannel(this.bridge, channelIds);
 	}
 
 	public hangUpClient() {
