@@ -5,8 +5,11 @@ import { BaseCall } from './base-call';
 
 export class OutboundCall extends BaseCall {
 
-	constructor(clientSocket: WebsocketClient, remoteNb: string) {
+	displayName: string = null;
+
+	constructor(clientSocket: WebsocketClient, remoteNb: string, displayName?: string) {
 		super(clientSocket, remoteNb);
+		this.displayName = displayName;
 		this.debugMessage(`Remote Nb: ${remoteNb}`);
 		this.listenOnStasis();
 	}
@@ -36,7 +39,7 @@ export class OutboundCall extends BaseCall {
 
 	protected async clientChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
-			let res: any = await this.clientSocket.ariRest.restChannels.create(this.remoteEndpoint, this.stasisAppName, true);
+			let res: any = await this.clientSocket.ariRest.restChannels.create(this.remoteEndpoint, this.stasisAppName, this.displayName, true);
 			if (res.error) {
 				await this.destroy();
 				return this.clientSocket.sendError([{code: 'ENDPOINT_ERROR', data: res.error}]);

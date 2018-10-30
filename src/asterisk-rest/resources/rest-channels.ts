@@ -7,10 +7,10 @@ export class RestChannels extends HttpRequest {
 	protected endpoint = 'channels';
 
 
-	async create(endpoint: string | number, stasisAppName: string, useTrunk?: boolean): Promise<AriChannelInterface> {
+	async create(endpoint: string | number, stasisAppName: string, displayName?: string, useTrunk?: boolean): Promise<AriChannelInterface> {
 		let data = {
 			endpoint: useTrunk ? `SIP/${endpoint}@${process.env.TRUNK_NAME}` : `SIP/${endpoint}`,
-			callerId: process.env.SERVER_DISPLAY_NAME || 'unknown',
+			callerId: displayName || process.env.SERVER_DISPLAY_NAME || 'unknown',
 			app: stasisAppName,
 			timeout: process.env.CHANNEL_TIMEOUT || 25
 		};
@@ -18,7 +18,6 @@ export class RestChannels extends HttpRequest {
 
 		return this.post(data);
 	}
-
 
 	async hangup(channelId: string) {
 		AppLogger.debug(`Hangup Channel ${channelId}`);
