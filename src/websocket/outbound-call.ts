@@ -12,7 +12,6 @@ export class OutboundCall extends BaseCall {
 
 	listenOnStasis() {
 		this.stasisAppSocket.onopen = () => {
-			this.debugMessage(`Ws Connection to Stasis open`);
 			this.setClientSipChannel();
 		};
 		this.stasisAppSocket.onmessage = (msg) => {
@@ -24,7 +23,7 @@ export class OutboundCall extends BaseCall {
 			// console.log(err);
 		};
 		this.stasisAppSocket.onclose = () => {
-			this.debugMessage('Ws connection closed - Call Ended');
+			this.debugMessage(`Call ended - WS closed`);
 		}
 	}
 
@@ -52,7 +51,6 @@ export class OutboundCall extends BaseCall {
 	protected async remoteChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
 			await this.createBridgeAndAddChannels();
-			this.debugMessage("Call connected");
 			this.callState = 'CONNECTED';
 			this.clientSocket.sendEvent({name: 'CALL_CONNECTED'});
 		}

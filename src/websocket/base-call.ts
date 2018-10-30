@@ -11,14 +11,24 @@ export abstract class BaseCall {
 	protected clientChannel: AriChannelInterface = null;
 	protected remoteChannel: AriChannelInterface = null;
 	protected callConnected: boolean = false;
-	protected callState: 'NEUTRAL' | 'CLIENT_RINGING' | 'REMOTE_RINGING' | 'DESTROYING' | 'CONNECTED' = 'NEUTRAL';
+
+	private _callState: 'NEUTRAL' | 'CLIENT_RINGING' | 'REMOTE_RINGING' | 'DESTROYING' | 'CONNECTED' = 'NEUTRAL';
+
+	get callState() {
+		return this._callState;
+	}
+
+	set callState(state: 'NEUTRAL' | 'CLIENT_RINGING' | 'REMOTE_RINGING' | 'DESTROYING' | 'CONNECTED') {
+		this.debugMessage(`State Change: ${state}`);
+		this._callState = state;
+	}
 
 	constructor(clientSocket: WebsocketClient, remoteNb: string) {
 		this.clientSocket = clientSocket;
 		this.stasisAppName = `${clientSocket.clientSipId}_outbound`;
 		this.stasisAppSocket = clientSocket.ariRest.restEvents.stasisAppWebsocket(this.stasisAppName);
 		this.remoteEndpoint = remoteNb;
-		this.debugMessage(`Initialize outbound call`);
+		this.debugMessage(`Call Init - WS open`);
 	}
 
 	public async setClientSipChannel() {
