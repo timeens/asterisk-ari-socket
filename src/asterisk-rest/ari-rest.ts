@@ -3,6 +3,7 @@ import { RestChannels } from './resources/rest-channels';
 import { RestBridges } from './resources/rest-bridges';
 import { RestEvents } from './resources/rest-events';
 import { RestApplications } from './resources/rest-applications';
+import { RestAsterisk } from './resources/rest-asterisk';
 
 export class AriRest {
 
@@ -11,6 +12,7 @@ export class AriRest {
 	restBridges: RestBridges;
 	restEvents: RestEvents;
 	restApplications: any;
+	restAsterisk: any;
 
 	constructor() {
 		this.restEndpointSip = new RestEndpointsSip();
@@ -18,5 +20,6 @@ export class AriRest {
 		this.restBridges = new RestBridges();
 		this.restEvents = new RestEvents();
 		this.restApplications = new RestApplications();
+		this.restAsterisk = new RestAsterisk();
 	}
 }
