@@ -9,7 +9,7 @@ export const EVENT_CONFIG: Array<EventConfigInterface> = [
 				key: 'sipNr',
 				validate: function (val) {
 					return Number.isInteger(parseInt(val));
-				}
+				},
 			}
 		]
 	},
