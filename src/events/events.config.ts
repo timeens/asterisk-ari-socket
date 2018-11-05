@@ -20,7 +20,6 @@ export const EVENT_CONFIG: Array<EventConfigInterface> = [
 			{
 				key: 'remoteEndpoint',
 				validate: function (val) {
-					// todo error in this class!!!
 					let phone = new PhoneNumber(val);
 					return phone.isValid;
 				}

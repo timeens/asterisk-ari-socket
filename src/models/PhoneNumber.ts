@@ -9,7 +9,7 @@ export class PhoneNumber {
 	constructor(phoneNumber: string) {
 		this.internal = phoneNumber;
 		this.raw = phoneNumber;
-		this.parsed = new PhoneNumberParser(phoneNumber);
+		if (!this.internal) this.parsed = new PhoneNumberParser(phoneNumber);
 	}
 
 	get rawNumber() {
@@ -39,7 +39,7 @@ export class PhoneNumber {
 	}
 
 	set internal(phoneNumber: any) {
-		this._isInternal = (phoneNumber.length <= 4 && Number.isInteger(Number.parseInt(phoneNumber)));
+		this._isInternal = Number.isInteger(Number.parseInt(phoneNumber));
 	}
 
 	get internal() {
