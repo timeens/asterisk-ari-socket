@@ -1,5 +1,6 @@
 import { EventConfigInterface } from '../interfaces/event-config.interface';
 import { PhoneNumber } from '../models/PhoneNumber';
+import { isString } from 'util';
 
 export const EVENT_CONFIG: Array<EventConfigInterface> = [
 	{
@@ -10,7 +11,7 @@ export const EVENT_CONFIG: Array<EventConfigInterface> = [
 				validate: function (val) {
 					return Number.isInteger(parseInt(val));
 				},
-			}
+			},
 		]
 	},
 	{
@@ -19,9 +20,16 @@ export const EVENT_CONFIG: Array<EventConfigInterface> = [
 			{
 				key: 'remoteEndpoint',
 				validate: function (val) {
+					// todo error in this class!!!
 					let phone = new PhoneNumber(val);
 					return phone.isValid;
 				}
+			},
+			{
+				key: 'displayName',
+				validate: function (val) {
+					return (typeof val === 'string');
+				},
 			}
 		]
 	},
