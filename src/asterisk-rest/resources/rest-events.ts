@@ -9,7 +9,7 @@ export class RestEvents extends HttpRequest {
 
 	stasisAppWebsocket(stasisAppName) {
 		let uri = `${this.eventsWebsocketUri}&app=${stasisAppName}`;
-		AppLogger.debug(`Creating Weboscket connection to ${uri}`);
+		AppLogger.debug(`Creating websocket connection to ${uri}`);
 
 		return new ws(uri);
 	}

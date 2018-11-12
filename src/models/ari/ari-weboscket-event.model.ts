@@ -17,6 +17,10 @@ export class AriWeboscketEventModel {
 		return this.dataInterface.type;
 	}
 
+	get callingNumber() {
+		return this.dataInterface.channel.caller.number || null;
+	}
+
 	get hangupCause() {
 		return this.dataInterface.cause_txt || null;
 	}
