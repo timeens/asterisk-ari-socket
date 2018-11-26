@@ -66,20 +66,20 @@ export abstract class HttpRequest {
 
 	protected get eventsWebsocketUri(): string {
 		let protokoll = 'ws://';
-		let uri = `${protokoll}${process.env.ARI_REST_IP}:${process.env.ARI_REST_PORT}/ari/${this.endpoint}`;
+		let uri = `${protokoll}${process.env['ARI_REST_IP']}:${process.env['ARI_REST_PORT']}/ari/${this.endpoint}`;
 
 		return `${uri}?${this.authUrlPart}`;
 	}
 
 	protected get authUrlPart() {
-		return `api_key=${process.env.ARI_REST_USERNAME}:${process.env.ARI_REST_PASSWORD}`;
+		return `api_key=${process.env['ARI_REST_USERNAME']}:${process.env['ARI_REST_PASSWORD']}`;
 	}
 
 	protected get protocol() {
-		return process.env.HTTPS ? 'https://' : 'http://';
+		return process.env['HTTPS'] ? 'https://' : 'http://';
 	}
 
 	protected get baseUri() {
-		return `${this.protocol}${process.env.ARI_REST_IP}:${process.env.ARI_REST_PORT}/ari/${this.endpoint}`;
+		return `${this.protocol}${process.env['ARI_REST_IP']}:${process.env['ARI_REST_PORT']}/ari/${this.endpoint}`;
 	}
 }

@@ -11,7 +11,7 @@ export class AsteriskAriServer {
 
 	constructor() {
 		let WebSocketServer = ws.Server;
-		this.port = process.env.SERVER_PORT || 3001;
+		this.port = process.env['SERVER_PORT'] || 3001;
 		this.wsServer = new WebSocketServer({port: this.port});
 		this.initInboundSocket();
 	}

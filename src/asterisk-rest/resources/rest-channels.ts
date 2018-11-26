@@ -9,10 +9,10 @@ export class RestChannels extends HttpRequest {
 
 	async create(endpoint: string | number, stasisAppName: string, displayName?: string, useTrunk?: boolean): Promise<AriChannelInterface> {
 		let data = {
-			endpoint: useTrunk ? `SIP/${endpoint}@${process.env.TRUNK_NAME}` : `SIP/${endpoint}`,
-			callerId: displayName || process.env.SERVER_DISPLAY_NAME || 'unknown',
+			endpoint: useTrunk ? `SIP/${endpoint}@${process.env['TRUNK_NAME']}` : `SIP/${endpoint}`,
+			callerId: displayName || process.env['SERVER_DISPLAY_NAME'] || 'unknown',
 			app: stasisAppName,
-			timeout: process.env.CHANNEL_TIMEOUT || 25
+			timeout: process.env['CHANNEL_TIMEOUT'] || 25
 		};
 		AppLogger.debug(`Create Channel`);
 

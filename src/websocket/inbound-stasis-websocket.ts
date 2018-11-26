@@ -12,7 +12,7 @@ export class InboundStasisWebsocket extends events.EventEmitter {
 
 	constructor() {
 		super();
-		this.stasisInboundAppName = process.env.INBOUND_STASIS_APP_NAME;
+		this.stasisInboundAppName = process.env['INBOUND_STASIS_APP_NAME'];
 		if (!this.stasisInboundAppName) throw new Error('Stasis inbound app name missing');
 		this.listen();
 	}

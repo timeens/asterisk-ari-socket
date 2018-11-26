@@ -3,7 +3,7 @@ import { $log } from 'ts-log-debug';
 export class AppLogger {
 
 	public static get level() {
-		return process.env.DEBUG ? 'DEBUG' : 'INFO';
+		return process.env['DEBUG'] ? 'DEBUG' : 'INFO';
 	}
 
 	public static debug(msg) {
