@@ -7,9 +7,10 @@ export class PhoneNumber {
 	private _isInternal: boolean = false;
 
 	constructor(phoneNumber: string) {
-		this.internal = phoneNumber;
+		phoneNumber = this.customSanitizing(phoneNumber);
+		this.isInternal = phoneNumber;
 		this.raw = phoneNumber;
-		if (!this.internal) this.parsed = new PhoneNumberParser(phoneNumber);
+		if (!this.isInternal) this.parsed = new PhoneNumberParser(phoneNumber);
 	}
 
 	get rawNumber() {
@@ -17,7 +18,7 @@ export class PhoneNumber {
 	}
 
 	get isValid(): boolean {
-		if (this.internal) return true;
+		if (this.isInternal) return true;
 		return this.parsed.isValid();
 	}
 
@@ -30,7 +31,7 @@ export class PhoneNumber {
 	}
 
 	get number(): string {
-		if (this.internal) return this.rawNumber;
+		if (this.isInternal) return this.rawNumber;
 		return this.parsed.getNumber();
 	}
 
@@ -38,11 +39,19 @@ export class PhoneNumber {
 		return this.parsed.getRegionCode();
 	}
 
-	set internal(phoneNumber: any) {
-		this._isInternal = Number.isInteger(Number.parseInt(phoneNumber));
+	set isInternal(phoneNumber: any) {
+		this._isInternal = Number.isInteger(Number.parseInt(phoneNumber)) && phoneNumber.length <= 4;
 	}
 
-	get internal() {
+	get isInternal() {
 		return this._isInternal;
+	}
+
+
+	private customSanitizing(phoneNumber: string): string {
+		// leading 00 have to be transformed to +
+		if (!Number.parseInt(phoneNumber[0]) && !Number.parseInt(phoneNumber[1])) phoneNumber = `+${phoneNumber.slice(2)}`;
+
+		return phoneNumber;
 	}
 }

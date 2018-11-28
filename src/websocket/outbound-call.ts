@@ -11,7 +11,7 @@ export class OutboundCall extends BaseCall {
 	constructor(clientSocket: WebsocketClient, remoteNb: PhoneNumber, displayName?: string) {
 		super(clientSocket, remoteNb);
 		this.displayName = displayName;
-		this.debugMessage(`Remote Nb${remoteNb.internal ? '(internal)' : '(external)'}: ${remoteNb.number}`);
+		this.debugMessage(`Remote Nb${remoteNb.isInternal ? '(internal)' : '(external)'}: ${remoteNb.number}`);
 		this.listenOnStasis();
 	}
 
@@ -40,7 +40,7 @@ export class OutboundCall extends BaseCall {
 
 	protected async clientChannelEventHandler(event: AriWeboscketEventModel) {
 		if (event.type === 'StasisStart') {
-			let res: any = await this.clientSocket.ariRest.restChannels.create(this.remoteEndpoint.number, this.stasisAppName, this.displayName, !this.remoteEndpoint.internal);
+			let res: any = await this.clientSocket.ariRest.restChannels.create(this.remoteEndpoint.number, this.stasisAppName, this.displayName, !this.remoteEndpoint.isInternal);
 			if (res.error) {
 				await this.destroy();
 				return this.clientSocket.sendError([{code: 'ENDPOINT_ERROR', data: res.error}]);
