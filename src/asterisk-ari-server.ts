@@ -26,7 +26,7 @@ export class AsteriskAriServer {
 			const httpsServer = https.createServer(credentials);
 			httpsServer.listen(this.port);
 			this.wsServer = new WebSocketServer({server: httpsServer});
-			AppLogger.info(`Server listening on port ${this.port}} (TLS protected)`);
+			AppLogger.info(`Server listening on port ${this.port} (TLS protected)`);
 		} else {
 			this.wsServer = new WebSocketServer({port: this.port});
 			AppLogger.info(`Server listening on port ${this.port} (unsecure connection)`);
