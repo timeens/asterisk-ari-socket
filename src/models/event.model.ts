@@ -1,5 +1,5 @@
 import { EVENT_CONFIG } from '../events/events.config';
-import { ParamInterface } from '../interfaces/Param.interface';
+import { ParamInterface } from '../interfaces/param.interface';
 import { ErrorInterface } from '../interfaces/error.interface';
 import { EventConfigInterface } from '../interfaces/event-config.interface';
 
