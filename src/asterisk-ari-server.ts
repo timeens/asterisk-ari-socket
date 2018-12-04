@@ -19,14 +19,13 @@ export class AsteriskAriServer {
 	private createServer() {
 		let WebSocketServer = ws.Server;
 		if (process.env['SSL_KEY_PATH'] || process.env['SSL_CERTIFICATE_PATH']) {
-			let securePort = 8443;
 			const privateKey = fs.readFileSync(process.env['SSL_KEY_PATH'], 'utf8');
 			const certificate = fs.readFileSync(process.env['SSL_CERTIFICATE_PATH'], 'utf8');
 			const credentials = {key: privateKey, cert: certificate};
 			const httpsServer = https.createServer(credentials);
-			httpsServer.listen(securePort);
+			httpsServer.listen(this.port);
 			this.wsServer = new WebSocketServer({server: httpsServer});
-			AppLogger.info(`Server listening on port ${securePort} (TLS protected)`);
+			AppLogger.info(`Server listening on port ${this.port}} (TLS protected)`);
 		} else {
 			this.port = process.env['SERVER_PORT'] || 3001;
 			this.wsServer = new WebSocketServer({port: this.port});
