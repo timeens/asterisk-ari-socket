@@ -12,6 +12,7 @@ export class AsteriskAriServer {
 	protected port: any;
 
 	constructor() {
+		this.port = process.env['SERVER_PORT'] || 3001;
 		this.createServer();
 		this.initInboundSocket();
 	}
@@ -27,7 +28,6 @@ export class AsteriskAriServer {
 			this.wsServer = new WebSocketServer({server: httpsServer});
 			AppLogger.info(`Server listening on port ${this.port}} (TLS protected)`);
 		} else {
-			this.port = process.env['SERVER_PORT'] || 3001;
 			this.wsServer = new WebSocketServer({port: this.port});
 			AppLogger.info(`Server listening on port ${this.port} (unsecure connection)`);
 		}

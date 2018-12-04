@@ -32,9 +32,9 @@ export class EventModel {
 	}
 
 	protected setConfig() {
-		this.eventConfig = EVENT_CONFIG.filter((e) => {
+		this.eventConfig = EVENT_CONFIG.find((e) => {
 			return e.name === this.name;
-		})[0];
+		});
 		this._params = this.raw.params;
 	}
 
