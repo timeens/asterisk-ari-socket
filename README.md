@@ -1,6 +1,9 @@
 SSL Cert generation for wss TLS
-openssl genrsa -des3 -out asterisk.key.encrypted 2048
 
-openssl req -x509 -new -nodes -key asterisk.key.encrypted -sha256 -days 1825 -out asterisk.pem
+adjust config file from cert folder
 
-openssl rsa -in asterisk.key.encrypted -out asterik.key
+openssl req -config cert.conf -new -sha256 -newkey rsa:2048 \
+-nodes -keyout socket.asterisk.immosky.com.key -x509 -days 365 \
+-out socket.asterisk.immosky.com.crt
+
+
