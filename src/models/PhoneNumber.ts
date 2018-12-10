@@ -48,9 +48,10 @@ export class PhoneNumber {
 	}
 
 
-	private customSanitizing(phoneNumber: string): string {
+	private customSanitizing(phoneNumber: string | number): string {
 		// leading 00 have to be transformed to +
-		if (!Number.parseInt(phoneNumber[0]) && !Number.parseInt(phoneNumber[1])) phoneNumber = `+${phoneNumber.slice(2)}`;
+		if (typeof phoneNumber !== 'string') phoneNumber = phoneNumber.toString();
+		if (typeof phoneNumber === 'string' && !Number.parseInt(phoneNumber.charAt(0)) && !Number.parseInt(phoneNumber.charAt(1))) phoneNumber = `+${phoneNumber.slice(2)}`;
 
 		return phoneNumber;
 	}

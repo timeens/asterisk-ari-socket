@@ -41,7 +41,7 @@ export class WebsocketClient extends WebsocketClientBase {
 			}
 			case 'OUTBOUND_CALL': {
 				if (this.callInProgress) return this.sendError([{code: 'CALL_IN_PROGRESS'}]);
-				if (!this.clientSipId) return this.sendError([{code: 'SIP_UNAVAILABLE'}]);
+				if (!this.clientSipId || !await this.ariRest.restEndpointSip.isSipOnline(this.clientSipId)) return this.sendError([{code: 'SIP_UNAVAILABLE'}]);
 				let remoteEndpoint = event.getParam('remoteEndpoint');
 				let displayName = event.getParam('displayName');
 				this.outboundCall = new OutboundCall(this, new PhoneNumber(remoteEndpoint), displayName);
