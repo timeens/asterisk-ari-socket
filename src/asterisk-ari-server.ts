@@ -41,7 +41,7 @@ export class AsteriskAriServer {
 	}
 
 	private initInboundSocket() {
-		if(process.env['INBOUND_SOCKET_ENABLED'] != 'true') return AppLogger.info("Inbound Socket disabled");
+		if(process.env['INBOUND_ENABLED'] != 'true') return AppLogger.info("Inbound Socket disabled");
 		this.inboundCallsSocket = new InboundStasisWebsocket();
 		this.inboundCallsSocket.events.on('event', (event: string) => {
 			this.wsServer.clients.forEach(client => {
