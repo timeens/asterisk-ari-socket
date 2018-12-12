@@ -13,8 +13,8 @@ export class AsteriskAriServer {
 
 	constructor() {
 		this.port = process.env['SERVER_PORT'] || 3001;
-		this.createServer();
 		this.initInboundSocket();
+		this.createServer();
 	}
 
 	private createServer() {
@@ -40,7 +40,8 @@ export class AsteriskAriServer {
 		});
 	}
 
-	initInboundSocket() {
+	private initInboundSocket() {
+		if(process.env['INBOUND_SOCKET_ENABLED'] != 'true') return AppLogger.info("Inbound Socket disabled");
 		this.inboundCallsSocket = new InboundStasisWebsocket();
 		this.inboundCallsSocket.events.on('event', (event: string) => {
 			this.wsServer.clients.forEach(client => {

@@ -19,7 +19,8 @@ rest.restAsterisk.isAvailable()
 		throw Error(err);
 	});
 
-// keep alive node process
-setInterval(() => {
-	AppLogger.debug('keep alive');
-}, 1000);
+
+process.on('uncaughtException', function (err) {
+	console.log("Uncaught Exception:", err);
+	process.exit(1);  // This is VITAL. Don't swallow the err and try to continue.
+});

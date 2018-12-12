@@ -18,6 +18,7 @@ export class InboundStasisWebsocket extends events.EventEmitter {
 	}
 
 	listen() {
+		AppLogger.info(`Inbound socket "${this.stasisInboundAppName}" listening for events`);
 		this.wsToStasisInbound = new AriRest().restEvents.stasisAppWebsocket(this.stasisInboundAppName);
 		this.wsToStasisInbound.onmessage = (event: any) => {
 			let ariEvent = new AriWeboscketEventModel(event.data);
