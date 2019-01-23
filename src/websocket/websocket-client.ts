@@ -45,7 +45,10 @@ export class WebsocketClient extends WebsocketClientBase {
 				let remoteEndpoint = event.getParam('remoteEndpoint');
 				let displayName = event.getParam('displayName');
 				let endpoint = new PhoneNumber(remoteEndpoint);
-				if(!endpoint.isValid) return this.sendError([{code: 'PARAMETER_VALIDATION_ERROR', data:endpoint.number}]);
+				if(!endpoint.isValid) {
+					AppLogger.info(`Endpoint invalid: ${endpoint.number}`);
+					return this.sendError([{code: 'PARAMETER_VALIDATION_ERROR', data:endpoint.number}]);
+				}
 				this.outboundCall = new OutboundCall(this, new PhoneNumber(remoteEndpoint), displayName);
 				break;
 			}
