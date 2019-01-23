@@ -52,6 +52,8 @@ export class PhoneNumber {
 		// leading 00 have to be transformed to +
 		if (typeof phoneNumber !== 'string') phoneNumber = phoneNumber.toString();
 		if (typeof phoneNumber === 'string' && !Number.parseInt(phoneNumber.charAt(0)) && !Number.parseInt(phoneNumber.charAt(1))) phoneNumber = `+${phoneNumber.slice(2)}`;
+		// detect swiss phone number with missing pre number
+		if(typeof phoneNumber === 'string' && phoneNumber.length === 10 && Number.parseInt(phoneNumber.charAt(0)) === 0) phoneNumber = `+41${phoneNumber}`;
 
 		return phoneNumber;
 	}
