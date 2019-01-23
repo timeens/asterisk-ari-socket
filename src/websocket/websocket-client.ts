@@ -44,6 +44,8 @@ export class WebsocketClient extends WebsocketClientBase {
 				if (!this.clientSipId || !await this.ariRest.restEndpointSip.isSipOnline(this.clientSipId)) return this.sendError([{code: 'SIP_UNAVAILABLE'}]);
 				let remoteEndpoint = event.getParam('remoteEndpoint');
 				let displayName = event.getParam('displayName');
+				let endpoint = new PhoneNumber(remoteEndpoint);
+				if(!endpoint.isValid) return this.sendError([{code: 'PARAMETER_VALIDATION_ERROR', data:endpoint.number}]);
 				this.outboundCall = new OutboundCall(this, new PhoneNumber(remoteEndpoint), displayName);
 				break;
 			}
