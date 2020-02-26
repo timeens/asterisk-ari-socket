@@ -1,0 +1,13 @@
+version: '3.3'
+
+services:
+  mongodb:
+    image: eyeruleall/asterisk17
+    container_name: "asterisk"
+    ports:
+      - 5060:5060
+      - 5061:5061
+    volumes:
+      - ./asterisk/spool:/var/spool/asterisk
+      - ./asterisk/etc:/etc/asterisk
+      - ./asterisk/config:/asterisk-config
